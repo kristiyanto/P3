@@ -4,7 +4,7 @@ P3 is an open source pipelines for Mass Spectrometry Data Pre-Processing and Qua
 
 Currently, there are three containers available:
 
-1. Identification tool: Containing [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf) as protein identification. Input: raw files (```*.mzml```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl``) and a dictionary (```*.fasta```) file. Output: ```*.mzid``` for each of raw files provided. 
+1. Identification tool: Containing [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf) as protein identification. Input: raw files (```*.mzml```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and a dictionary (```*.fasta```) file. Output: ```*.mzid``` for each of raw files provided. 
 ```
 docker pull kristiyanto/p3:msgf
 docker run --rm -v /c/Users/path/to/files:/root/data kristiyanto/p3:msgf 
