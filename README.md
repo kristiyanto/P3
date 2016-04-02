@@ -12,7 +12,12 @@ To run the container:
 docker pull kristiyanto/p3:msgf
 docker run --rm -v /c/Users/path/to/files:/root/data kristiyanto/p3:msgf 
 ```
-#### Label-Free/ (Full Pipeline)
+
+#### Label-Free/SpectrumCount Quantification
+This container compute proteomics quantification for Label-Free proteomics raw data, using [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html). Input: raw files (```*.mzml```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and idenfification files (```*.mzid```). Output: Output: ```*.mzid``` for each of raw files provided, ```LabelFreeQuant.txt``` a tab deliminated file with the protein names and the spectrum counts, and ```evalue.txt``` a tab deliminated file of the evalue of the spectrums for further analysis. 
+
+
+#### Label-Free/SpectrumCount (Full Pipeline)
 Spectrum Count: This is a complete pipeline for label-free proteomics quantification (spectrum count). Input: raw files (```*.mzml```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and a dictionary (```*.fasta```). Output: ```*.mzid``` for each of raw files provided, ```LabelFreeQuant.txt``` a tab deliminated file with the protein names and the spectrum counts, and ```evalue.txt``` a tab deliminated file of the evalue of the spectrums for further analysis. Identification is performed using MSGF+ tool, and quantification is performed by using  [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html).
 
 To run the container:
@@ -20,6 +25,9 @@ To run the container:
 docker pull kristiyanto/p3:spectrumcount
 docker run --rm -v /c/Users/path/to/files:/root/data kristiyanto/p3:spectrumcount
 ```
+#### iTraq for Labelled  Quantification
+This container compute proteomics quantification for Labelled proteomics raw data, using iTraq from [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html). Input: raw files (```*.mzml```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and idenfification files (```*.mzid```). Output: Output: ```*.mzid``` for each of raw files provided, ```LabelledQuant.txt``` a tab deliminated file with the protein names and the spectrum counts, and ```evalue.txt``` a tab deliminated file of the evalue of the spectrums for further analysis. 
+
 
 #### iTRaq for Labelled Quantification (Full Pipeline)
 iTraq: This is a complete pipeline for labelled proteomics quantification. Input: raw files (```*.mzml```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and a dictionary (```*.fasta```). Output: ```*.mzid``` for each of raw files provided, ```LabelledQuant.txt``` a tab deliminated file with the protein names and the spectrum counts, and ```evalue.txt``` a tab deliminated file of the evalue of the spectrums for further analysis. Identification is performed by utilizing [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf), and Quantification is conducted by utilizing [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html), a bioconductor package by Laurent Gatto _et. all._
