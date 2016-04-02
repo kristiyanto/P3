@@ -1,5 +1,6 @@
+# Spectrum Count Quantification
+# Docker Container: scquant
 # Base container
-# Docker Container: spectrumcount
 FROM bioconductor/devel_proteomics
 
 # Maintainer
@@ -14,12 +15,6 @@ RUN apt-get -q -y install default-jdk unzip python2.7 python2.7-dev g++ build-es
 RUN apt-get clean
 ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 
-# Add MSGF plus
-#ADD https://omics.pnl.gov/sites/default/files/software/MSGFPlus.20140716.zip /root/MSGF/
-#RUN cd /root/MSGF/ && \
-#	unzip -q MSGFPlus.20140716.zip && \
-#   rm MSGFPlus.20140716.zip 
-ADD MSGFPlus.jar /root/
 
 # Add Entrypoint Script
 ADD entry.py /root/
