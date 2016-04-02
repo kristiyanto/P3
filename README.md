@@ -14,7 +14,7 @@ docker run --rm -v /c/Users/path/to/files:/root/data kristiyanto/p3:msgf
 ```
 docker pull kristiyanto/p3:spectrumcount
 docker run --rm -v /c/Users/path/to/files:/root/data kristiyanto/p3:spectrumcount
-``
+```
 
 3. iTraq: This is a complete pipeline for labelled proteomics quantification. Input: raw files (\*.mzml, \*.mgf, \*.mzxml, \*.ms2, \*.pkl) and a dictionary (```*.fasta```). Output: ```*.mzid``` for each of raw files provided, ```LabelledQuant.txt``` a tab deliminated file with the protein names and the spectrum counts, and ```evalue.txt``` a tab deliminated file of the evalue of the spectrums for further analysis. Identification is performed by utilizing [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf), and Quantification is conducted by utilizing [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html), a bioconductor package by Laurent Gatto _et. all._
 
