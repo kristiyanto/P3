@@ -12,6 +12,6 @@ docker-machine create -d virtualbox --swarm --swarm-discovery token://$sid swarm
 # List of exsisting swarm
 docker run swarm list token://$sid
 # Get into the swarm environtment
-`docker-machine env --swarm swarm-master`
+eval `docker-machine env --swarm swarm-master`
 docker ps
 
