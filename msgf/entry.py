@@ -15,6 +15,7 @@ import csv
 from ftplib import FTP
 from _functions import *
 from datetime import timedelta
+from datetime import datetime
 import time
 
 working_dir = os.getcwd() +"/data/"
@@ -25,12 +26,13 @@ db 			= None
 module 		= None
 input_csv	= None
 start_time = time.time()
+print("Start at:", str(datetime.now()))
 
 ######################## DECOMPRESS ###########################
 spectrum_tmp = []
 for src_name in glob.glob(os.path.join(working_dir, '*.gz')):
     base = os.path.basename(src_name)
-    print("Extracting", src_name)
+    #print("Extracting", src_name)
     dest_name = os.path.join(working_dir, base[:-3])
     if not os.path.isfile(dest_name):
     	spectrum_tmp.append(dest_name)
@@ -64,17 +66,5 @@ for s in spectrum:
 	print("Done.")
 
 elapsed_time = time.time() - start_time
+print("Finished at:", str(datetime.now()))
 print("Elapsed time:", str(timedelta(seconds=elapsed_time)))
-
-# if len(scan_mzid(working_dir)) != 0:
-# 	try:
-# 		print("Filtering.")
-# 		rscript()
-# 		print("Done.")
-# 	except:
-# 		print("Filtering failed.")
-# else:
-# 	print("Missing MZID Files.")
-# 	print("Windows/Mac Users:")
-# 	print("Hint for java heap memory space error: increase VM/Virtualbox Base Memory allocation.")
-
