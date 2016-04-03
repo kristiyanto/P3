@@ -2,7 +2,7 @@
 # EXTRACT, IF NECESSARY, AND RUN MGSF PLUS TO 
 # NORMALIZE THE DATA
 # DANIEL.KRISTIYANTO@PNNL.GOV
-
+# Docker Container: spectrumcount
 ######################## ENV ###########################
 import gzip
 import os

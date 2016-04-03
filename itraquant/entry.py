@@ -22,6 +22,7 @@ out 		= []
 db 			= None
 module 		= None
 input_csv	= None
+start_time = time.time()
 
 ######################## DECOMPRESS ###########################
 spectrum_tmp = []
@@ -63,3 +64,6 @@ if len(scan_mzid(working_dir)) != 0:
 		print("Filtering failed.")
 else:
 	print("Missing MZID Files.")
+
+elapsed_time = time.time() - start_time
+print("Elapsed time:", str(timedelta(seconds=elapsed_time)))

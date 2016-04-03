@@ -2,6 +2,7 @@
 # EXTRACT, IF NECESSARY, AND RUN MGSF PLUS TO 
 # NORMALIZE THE DATA
 # DANIEL.KRISTIYANTO@PNNL.GOV
+# Docker container: itraq
 
 ######################## ENV ###########################
 import gzip
@@ -13,6 +14,8 @@ import re
 import csv
 from ftplib import FTP
 from _functions import *
+from datetime import timedelta
+import time
 
 working_dir = os.getcwd() +"/data/"
 
@@ -21,6 +24,7 @@ out 		= []
 db 			= None
 module 		= None
 input_csv	= None
+start_time = time.time()
 
 ######################## DECOMPRESS ###########################
 spectrum_tmp = []
@@ -52,7 +56,6 @@ if (input_csv != None):
 ######################## CHECK FILES ###########################
 spectrum 				= scan_spectrum(working_dir)
 db, input_csv 			= scan_dir(working_dir)
-
 for s in spectrum:
 	out = os.path.splitext(s)[0]+'.mzid'
 	msgf(s,db,out)
@@ -69,3 +72,5 @@ else:
 	print("Windows/Mac Users:")
 	print("Hint for java heap memory space error: increase VM/Virtualbox Base Memory allocation.")
 
+elapsed_time = time.time() - start_time
+print("Elapsed time:", str(timedelta(seconds=elapsed_time)))
