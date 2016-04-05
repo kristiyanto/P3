@@ -41,7 +41,6 @@ for src_name in glob.glob(os.path.join(working_dir, '*.gz')):
 	                
 spectrum 				= scan_spectrum(working_dir)
 db, input_csv 			= scan_dir(working_dir)
-#module 		= dir_content['module']
 
 ######################## DOWNLOAD FTP ###########################
 if (input_csv != None):
