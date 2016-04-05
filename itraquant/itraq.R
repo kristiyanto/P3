@@ -41,7 +41,7 @@ quantified      <- as.data.frame(cbind(Accession_ID=str_replace(row.names(agg),"
 rm(qnt)
 rm(agg)
 gc()
-write.table(spectrum.count, quote=F, row.names=T, file="evalue.txt", sep ="\t")
+write.table(spectrum.count, quote=F, row.names=F, file="evalue.txt", sep ="\t")
 rm(spectrum.count)
 gc()
 write.table(quantified, row.names = F, quote=F, file="LabelledQuant.txt", sep = "\t")
