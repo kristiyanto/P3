@@ -5,22 +5,44 @@ import sys
 import subprocess
 import re
 from os.path import isfile, join
-from urlparse import urlparse
 from ftplib import FTP
+# from urllib.parse import urlparse
+# from configparser import SafeConfigParser
+
+from urlparse import urlparse
+from ConfigParser import SafeConfigParser
+
+
+
+######################## CHECK CONFIG FILE ###########################
+def get_r_opts(cfg_file):
+	r_options = []
+	parser = SafeConfigParser()
+	try: 
+		parser.read(cfg_file)
+		sc_options = ["score_treshold","error_treshold", "fdr", "iteration"]
+		for o in sc_options:
+			print(o +": "+parser.get("spectrum_count",o))
+			r_options.append(parser.get("spectrum_count",o))
+		return r_options
+	except:
+		print("Configuration File Error.")
 
 ######################## SUB PROCESSES ###########################
 
 def msgf(spectrum, db, out):
-	#print(spectrum, db, out)
 	if not os.path.isfile(out):
 		try:
 			subprocess.call(['java', '-Xmx3500M', '-jar', 'MSGFPlus.jar', '-s', spectrum, '-d', db, '-o', out])
 		except:
 			print("MZID conversion failed.")
 
-def rscript():
-	print("Filtering.")
-	runr = subprocess.call(['Rscript','labelfreequant.R'])
+def rscript(r_options):
+	cmd = ['Rscript','labelfreequant.R']
+	print(r_options)
+	cmd.extend(r_options)
+	print(cmd)
+	runr = subprocess.call(cmd)
 
 ######################## SCAN FILES ###########################
 
@@ -32,7 +54,6 @@ def scan_spectrum(working_dir):
 			if (len(spectrum)==0):
 				print("Missing spectrum files.")
 				exit()
-			#print("Spectrum: ", file)
 	return spectrum
 
 def scan_mzid(working_dir):
@@ -57,17 +78,14 @@ def scan_dir(working_dir):
 			if (db == None):
 				print("Missing database file.")
 				exit()
-			#print("Database: ", file)
 		if file.lower().endswith(".mod"):
 			module		= join(working_dir, file)
 			if (module == None):
 				print("Missing module file.")
-			#print("Module:", file)
 		if file.lower().endswith(".csv"):
 			input_csv 	= join(working_dir, file)
 			if (input_csv != None):
 				print(input_csv)
-			#print("CSV:", file)
 	return (db, input_csv)
 
 ######################## FTP HARVESTING ###########################

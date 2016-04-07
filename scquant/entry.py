@@ -17,13 +17,25 @@ from _functions import *
 from datetime import timedelta
 import time
 
-working_dir = os.getcwd() +"/data/"
+
 
 spectrum 	= []
 out 		= []
 db 			= None
 module 		= None
 input_csv	= None
+
+
+######################## READ CONFIG FILES ###########################
+
+working_dir = os.getcwd() +"/data/"
+#working_dir = "/Users/Daniel/Desktop/t/"
+cfg_file = os.path.join(working_dir, "p3.config")
+if os.path.isfile(cfg_file):
+	r_options = get_r_opts(cfg_file)
+else:
+	print("p3.config is missing.")
+	raise SystemExit
 
 ######################## DECOMPRESS ###########################
 spectrum_tmp = []
@@ -63,8 +75,9 @@ for s in spectrum:
 
 if len(scan_mzid(working_dir)) != 0:
 	try:
+		print(r_options)
 		print("Filtering.")
-		rscript()
+		rscript(r_options)
 		print("Done.")
 	except:
 		print("Filtering failed.")
