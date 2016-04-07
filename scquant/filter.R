@@ -50,10 +50,11 @@ prj <- apply_filter(prj, "!grepl('XXX_', accession)")
 
 ####################################### QUANTIFICATION ###################################################
 msnset  <- as(prj, "MSnSet")
-msnset  <- combineFeatures(as(msnset, "MSnSet"), fData(msnset)$accession, redundancy.handler="unique", fun="sum",cv=FALSE)
+msnset  <- combineFeatures(msnset, fData(msnset)$accession, redundancy.handler="unique", fun="sum",cv=FALSE)
 rm(prj)
 gc()
 tmp     <- exprs(msnset)
-tmp     <- tmp[tmp>0]
-write.table(tmp, file="SpectrumCount.txt", sep="\t")
+tmp     <- cbind(Protein=row.names(tmp), as.data.frame(tmp))
+          
+write.table(tmp, file="SpectrumCount.txt", sep="\t", row.names = F, col.names = T)
 save(msnset, file = "msnset.rda")
