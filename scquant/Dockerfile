@@ -17,7 +17,7 @@ RUN apt-get clean
 # Add Entrypoint Script
 ADD entry.py /root/
 ADD _functions.py /root/
-ADD labelfreequant.R /root/
+ADD filter.R /root/
 ADD install.R /root/
 
 RUN Rscript install.R

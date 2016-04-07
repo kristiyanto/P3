@@ -18,7 +18,6 @@ from datetime import timedelta
 import time
 
 
-
 spectrum 	= []
 out 		= []
 db 			= None
@@ -74,13 +73,12 @@ for s in spectrum:
 	msgf(s,db,out)
 
 if len(scan_mzid(working_dir)) != 0:
-	try:
-		print(r_options)
-		print("Filtering.")
-		rscript(r_options)
-		print("Done.")
-	except:
-		print("Filtering failed.")
+	# try:
+	print("Filtering.")
+	rscript(r_options)
+	print("Done.")
+	# except:
+	# 	print("Filtering failed.")
 else:
 	print("Missing MZID Files.")
 	print("Windows/Mac Users:")

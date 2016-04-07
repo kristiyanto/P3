@@ -3,15 +3,19 @@ library("mzID")
 library("MSnID")
 library("MSnbase")
 
+args = commandArgs(trailingOnly=TRUE)
+
+print(args)
+
 if (length(args)!=4) {
   stop("Areguments ", call.=FALSE)
-} else if (length(args)==1) {
-  score.treshold  = args[1]
-  error.treshold  = args[2]
-  fdr             = args[3]
-  iteration       = args[4]
+} else {
+  score.treshold  = as.numeric(args[1])
+  error.treshold  = as.numeric(args[2])
+  fdr             = as.double(args[3])
+  iteration       = as.numeric(args[4])
 }
-
+print("score.treshold", score.treshold)
 setwd("/root/data/")
 
 mz.files <- list.files(path = ".", pattern ="mzid", all.files = F, 
@@ -42,13 +46,14 @@ prj               <- apply_filter(prj, fObj.sann)
 
 prj <- apply_filter(prj, "!grepl('Contaminant', accession)")
 prj <- apply_filter(prj, "!grepl('XXX_', accession)")
-print(paste("After Filtering:",length(accessions(prj))))
+#print(paste("After Filtering:",length(accessions(prj))))
 
 ####################################### QUANTIFICATION ###################################################
-msnset  <- combineFeatures(as(prj, "MSnSet"), fData(out)$accession, redundancy.handler="unique", fun="sum",cv=FALSE)
+msnset  <- as(prj, "MSnSet")
+msnset  <- combineFeatures(as(msnset, "MSnSet"), fData(msnset)$accession, redundancy.handler="unique", fun="sum",cv=FALSE)
 rm(prj)
 gc()
 tmp     <- exprs(msnset)
 tmp     <- tmp[tmp>0]
-save.table(tmp, file="SpectrumCount.txt", sep="\t")
-save(msnset, file = "OUT.RData")
+write.table(tmp, file="SpectrumCount.txt", sep="\t")
+save(msnset, file = "msnset.rda")

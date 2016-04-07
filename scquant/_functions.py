@@ -38,10 +38,8 @@ def msgf(spectrum, db, out):
 			print("MZID conversion failed.")
 
 def rscript(r_options):
-	cmd = ['Rscript','labelfreequant.R']
-	print(r_options)
-	cmd.extend(r_options)
-	print(cmd)
+	cmd = ['Rscript','filter.R']
+	cmd.extend([str(x) for x in r_options])
 	runr = subprocess.call(cmd)
 
 ######################## SCAN FILES ###########################
