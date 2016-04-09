@@ -15,9 +15,10 @@ if (length(args)!=4) {
   fdr             = as.double(args[3])
   iteration       = as.numeric(args[4])
 }
+
 print("score.treshold:", score.treshold)
-print("error.treshold",error.treshold)
-print("fdr",fdr)
+print("error.treshold", error.treshold)
+print("fdr", fdr)
 print("iteration", iteration)
 
 setwd("/root/data/")
