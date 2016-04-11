@@ -4,3 +4,4 @@
 scquant/.Rcache/*
 
 *.history
+*.Rhistory
