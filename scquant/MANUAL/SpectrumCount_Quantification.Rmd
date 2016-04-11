@@ -6,21 +6,21 @@ author: "Daniel Kristiyanto (daniel.kristiyanto@pnnl.gov)"
 date: \today
 fontsize: 11pt
 output: pdf_document
-bibliography: ref.bib
-csl: biomed-central.csl
+bibliography: ../../media/ref.bib
+csl: ../../media/biomed-central.csl
 header-includes:
   \usepackage{fancyhdr}
   \usepackage{graphicx}
   \usepackage{hyperref}
   \pagestyle{fancy}
   \setlength\headheight{28pt}
-  \rhead{\includegraphics[width = .2\textwidth]{pnnllogo.png}}
+  \rhead{\includegraphics[width = .2\textwidth]{../../media/pnnllogo.png}}
   \fancyfoot[LE,RO]{kristiyanto/p3:scquant}
 ---
 \rule{\textwidth}{1pt}
 Portable Proteomics Pipeline (P3) is a series of protein mass spectrometry data pre-processing pipelines in Docker containers. The packages includes protein identification, filtering, and quantification for both labeled and label-free mass spectrometry data.
 
-This document discuss the ```kristiyanto/p3:scquant``` container, a spectrum count quantification pipeline for label-free mass spectrometry protein quantification. The pipeline is based on MSnID pipeline [@msnid].
+This document discuss the ```kristiyanto/p3:scquant``` container, a spectrum count quantification pipeline for label-free mass spectrometry protein quantification. The pipeline is based on MSnID pipeline [@msnid, @MSnID31].
 
 #Input
 The container takes the following files: 
@@ -82,7 +82,7 @@ ggplot(pepCleav, aes(x=numMissCleavages, y=Freq, fill=isDecoy)) + geom_bar(stat=
 ```
 
 ## Filter
-Filtering is done by using the parameter defined in the ```p3.config``` file. The filtering is including the error calculation (`variable: error_treshold`), scoring (`variable: score_treshold`), and filter optimization (`variable: iteration and fdr`).
+Filtering is done by using the parameter defined in the ```p3.config``` file. The filtering is including the error calculation (`variable: error_treshold`), scoring (`variable: score_treshold`), and filter optimization (`variable: iteration and fdr`) [@deutsch2010mass, @MSnID31].
 ```{r}
 show(mzid)
 show(fObj)

@@ -2,3 +2,5 @@
 *.pyc
 
 scquant/.Rcache/*
+
+*.history
