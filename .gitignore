@@ -1,2 +1,4 @@
 
 *.pyc
+
+scquant/.Rcache/*
