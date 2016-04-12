@@ -96,11 +96,15 @@ Filtering is done by: 1) Removing unidentified features, and features with e-val
 ```{r}
 # Prior Filtering
 length(msexp.id)
+print(evalue_treshold)
 k                 <- (fData(msexp.id)$'ms-gf:evalue'< evalue_treshold)
 k[is.na(k)]       <- FALSE
+print(sum(k)) # Number of kept features
 msexp.filter1     <- removeNoId(msexp.id, keep=k)
+# Subsquent evalue filter
 length(msexp.filter1)
 msexp.filter2     <- removeMultipleAssignment(msexp.filter1)
+# Subsquent multiple assigment filter
 length(msexp.filter2)
 fData(msexp.filter2)[1:3,]
 ```
@@ -109,6 +113,7 @@ fData(msexp.filter2)[1:3,]
 Quantification is done by using the MSnBase package [@msnbase], with method specified on the `p3.config` file.
 ```{r}
 head(exprs(qnt))
+print(pNA)
 qnt.filtered      <- filterNA(qnt, pNA = pNA)
 head(exprs(qnt.filtered))
 ```
@@ -116,8 +121,8 @@ head(exprs(qnt.filtered))
 ##Results
 subsequently, the features are aggregated by accession ID, with the value calculated using the function denoted on the `p3.config`.
 ```{r}
-length(exprs(qnt))
-result  <- combineFeatures(qnt, groupBy = fData(qnt)$accession, fun=combine_by)
+length(exprs(qnt.filtered))
+result  <- combineFeatures(qnt.filtered, groupBy = fData(qnt.filtered)$accession, fun=combine_by)
 length(exprs(result))
 head(exprs(result))
 ```
