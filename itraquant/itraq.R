@@ -41,6 +41,7 @@ msexp.raw         <- readMSData(mzml.files)
 print("Identifiying...")
 msexp.id          <- addIdentificationData(msexp.raw, id = mzids.raw)
 idSummary(msexp.id)
+print("Filtering...")
 k                 <- (fData(msexp.id)$'ms-gf:evalue'< evalue_treshold)
 k[is.na(k)]       <- FALSE
 msexp.filter1     <- removeNoId(msexp.id, keep=k)
