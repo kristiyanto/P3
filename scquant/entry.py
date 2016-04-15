@@ -33,7 +33,7 @@ cfg_file = os.path.join(working_dir, "p3.config")
 if os.path.isfile(cfg_file):
 	r_options = get_sc_opts(cfg_file)
 else:
-	print("p3.config is missing.")
+	print("p3.config is missing. \n Make sure to mount volumes to /root/data.")
 	raise SystemExit
 
 ######################## DECOMPRESS ###########################

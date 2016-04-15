@@ -26,6 +26,18 @@ module 		= None
 input_csv	= None
 start_time = time.time()
 
+######################## READ CONFIG FILES ###########################
+
+working_dir = os.getcwd() +"/data/"
+#working_dir = "/Users/Daniel/Desktop/t/"
+cfg_file = os.path.join(working_dir, "p3.config")
+if os.path.isfile(cfg_file):
+	r_options = get_itraq_opts(cfg_file)
+else:
+	print("p3.config is missing. \n Make sure to mount volumes to /root/data.")
+	raise SystemExit
+
+
 ######################## DECOMPRESS ###########################
 spectrum_tmp = []
 for src_name in glob.glob(os.path.join(working_dir, '*.gz')):

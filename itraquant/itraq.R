@@ -6,10 +6,27 @@ library(MSnbase)
 library(mzID)
 library(stringr)
 
+
+args = commandArgs(trailingOnly=TRUE)
+
+print(args)
+
+if (length(args)!=4) {
+  stop("Areguments ", call.=FALSE)
+} else {
+  evalue_treshold  	= as.double(args[1])
+  pNA 				= as.numeric(args[2])
+  quant_method		= args[3]
+  combine_by		= args[4]
+}
+
+print(paste("evalue_treshold:", evalue_treshold))
+print(paste("pNA:", pNA))
+print(paste("quant_method:", quant_method))
+print(paste("combine_by:"), combine_by)
+
 setwd("/root/data")
 
-evalue_treshold = 1e-10
-pNA             = 0
 ####################################### READ FILE ###################################################
 print("Isobaric Tagging Quantification")
 mzid.files        <- list.files(path = ".", pattern ="mzid", all.files = F, 
@@ -20,20 +37,21 @@ mzml.files        <- list.files(path = ".", pattern ="mzML$|mzXML$", all.files =
 mzids.raw         <- mzID(mzid.files)
 msexp.raw         <- readMSData(mzml.files)
 
-####################################### IDENTIFICATION ###################################################
+####################################### IDENTIFICATION & FILTERING ###################################################
 print("Identifiying...")
 msexp.id          <- addIdentificationData(msexp.raw, id = mzids.raw)
 idSummary(msexp.id)
-k                 <- (fData(msexp.id)$'ms-gf:evalue'< e.value)
+k                 <- (fData(msexp.id)$'ms-gf:evalue'< evalue_treshold)
 k[is.na(k)]       <- FALSE
 msexp.filter1     <- removeNoId(msexp.id, keep=k)
 msexp.filter2     <- removeMultipleAssignment(msexp.filter1)
 
+
 ####################################### QUANTIFICATION ###################################################
 print("Quantifying...")
-qnt               <- quantify(msexp.filter2, method="max", reporters=iTRAQ4, strict=F, verbose=F)
+qnt               <- quantify(msexp.filter2, method=quant_method, reporters=iTRAQ4, strict=F, verbose=F)
 qnt.filtered      <- filterNA(qnt, pNA = pNA)
-result            <- combineFeatures(qnt, groupBy = fData(qnt)$accession, fun="mean")
+result            <- combineFeatures(qnt, groupBy = fData(qnt)$accession, fun=combine_by)
 
 head(exprs(result))
 ####################################### OUTPUT ###################################################
@@ -46,6 +64,7 @@ gc()
 write.table(quantified, row.names = F, quote=F, file="LabelledQuant.txt", sep = "\t")
 rm(quantified)
 gc()
+save(result, file = "msnset.rda")
 save.image(file="itraq_results.RData")
 
 

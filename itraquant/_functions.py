@@ -1,4 +1,5 @@
 # DANIEL.KRISTIYANTO@PNNL.GOV
+# Container: itraquant
 
 import os
 import sys
@@ -9,6 +10,33 @@ from urlparse import urlparse
 from ftplib import FTP
 
 ######################## SUB PROCESSES ###########################
+def get_sc_opts(cfg_file):
+	r_options = []
+	parser = SafeConfigParser()
+	try: 
+		parser.read(cfg_file)
+		sc_options = ["score_treshold","error_treshold", "fdr", "iteration"]
+		for o in sc_options:
+			print(o +": "+parser.get("spectrum_count",o))
+			r_options.append(parser.get("spectrum_count",o))
+		return r_options
+	except:
+		print("Configuration File Error.")
+
+
+def get_itraq_opts(cfg_file):
+	r_options = []
+	parser = SafeConfigParser()
+	try: 
+		parser.read(cfg_file)
+		sc_options = ["evalue_treshold","pNA", "quant_method", "combine_by"]
+		for o in sc_options:
+			print(o +": "+parser.get("itraq4",o))
+			r_options.append(parser.get("itraq4",o))
+		return r_options
+	except:
+		print("Configuration File Error.")
+
 
 def msgf(spectrum, db, out):
 	#print(spectrum, db, out)
@@ -18,9 +46,10 @@ def msgf(spectrum, db, out):
 		except:
 			print("MZID conversion failed.")
 
-def rscript():
-	print("Filtering.")
-	runr = subprocess.call(['Rscript','itraq.R'])
+def rscript(r_options):
+	cmd = ['Rscript','filter.R']
+	cmd.extend([str(x) for x in r_options])
+	runr = subprocess.call(cmd)
 
 ######################## SCAN FILES ###########################
 
