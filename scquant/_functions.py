@@ -7,9 +7,6 @@ import subprocess
 import re
 from os.path import isfile, join
 from ftplib import FTP
-# from urllib.parse import urlparse
-# from configparser import SafeConfigParser
-
 from urlparse import urlparse
 from ConfigParser import SafeConfigParser
 

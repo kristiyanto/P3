@@ -8,6 +8,8 @@ import re
 from os.path import isfile, join
 from urlparse import urlparse
 from ftplib import FTP
+from urlparse import urlparse
+from ConfigParser import SafeConfigParser
 
 ######################## SUB PROCESSES ###########################
 def get_sc_opts(cfg_file):

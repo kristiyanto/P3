@@ -59,6 +59,6 @@ msnset  <- combineFeatures(msnset, fData(msnset)$accession, redundancy.handler="
 exprs.table     <- exprs(msnset)
 exprs.table     <- cbind(Protein=row.names(exprs.table), as.data.frame(exprs.table))
           
-write.table(tmp, file="SpectrumCount.txt", sep="\t", row.names = F, col.names = T)
+write.table(exprs.table, file="SpectrumCount.txt", sep="\t", row.names = F, col.names = T)
 save(msnset, file = "msnset.rda")
 save.image(file="scquant_results.RData")
