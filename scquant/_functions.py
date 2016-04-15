@@ -1,4 +1,5 @@
 # DANIEL.KRISTIYANTO@PNNL.GOV
+# container: scquant
 
 import os
 import sys
@@ -15,7 +16,7 @@ from ConfigParser import SafeConfigParser
 
 
 ######################## CHECK CONFIG FILE ###########################
-def get_r_opts(cfg_file):
+def get_sc_opts(cfg_file):
 	r_options = []
 	parser = SafeConfigParser()
 	try: 
@@ -24,6 +25,20 @@ def get_r_opts(cfg_file):
 		for o in sc_options:
 			print(o +": "+parser.get("spectrum_count",o))
 			r_options.append(parser.get("spectrum_count",o))
+		return r_options
+	except:
+		print("Configuration File Error.")
+
+
+def get_itraq_opts(cfg_file):
+	r_options = []
+	parser = SafeConfigParser()
+	try: 
+		parser.read(cfg_file)
+		sc_options = ["evalue_treshold","pNA", "quant_method", "combine_by"]
+		for o in sc_options:
+			print(o +": "+parser.get("itraq4",o))
+			r_options.append(parser.get("itraq4",o))
 		return r_options
 	except:
 		print("Configuration File Error.")
