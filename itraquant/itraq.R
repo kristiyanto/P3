@@ -12,7 +12,7 @@ args = commandArgs(trailingOnly=TRUE)
 print(args)
 
 if (length(args)!=4) {
-  stop("Areguments ", call.=FALSE)
+  stop("Arguments ", call.=FALSE)
 } else {
   evalue_treshold  	= as.double(args[1])
   pNA 				= as.numeric(args[2])
@@ -23,7 +23,7 @@ if (length(args)!=4) {
 print(paste("evalue_treshold:", evalue_treshold))
 print(paste("pNA:", pNA))
 print(paste("quant_method:", quant_method))
-print(paste("combine_by:"), combine_by)
+print(paste("combine_by:", combine_by))
 
 setwd("/root/data")
 

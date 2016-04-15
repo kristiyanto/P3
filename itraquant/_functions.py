@@ -49,7 +49,7 @@ def msgf(spectrum, db, out):
 			print("MZID conversion failed.")
 
 def rscript(r_options):
-	cmd = ['Rscript','filter.R']
+	cmd = ['Rscript','itraq.R']
 	cmd.extend([str(x) for x in r_options])
 	runr = subprocess.call(cmd)
 

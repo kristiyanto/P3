@@ -72,7 +72,7 @@ db, input_csv 			= scan_dir(working_dir)
 if len(scan_mzid(working_dir)) != 0:
 	try:
 		print("Filtering.")
-		rscript()
+		rscript(r_options)
 		print("Done.")
 	except:
 		print("Filtering failed.")
