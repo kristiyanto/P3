@@ -61,7 +61,7 @@ evalue.table	  <- as.data.frame(merge(fData(qnt.filtered)[,c("spectrum", "pepseq
 quantified		  <- as.data.frame(cbind(Accession_ID=str_replace(row.names(result),"ref\\|",""),exprs(result)))
 write.table(evalue.table, quote=F, row.names=F, file="evalue.txt", sep ="\t")
 save.image(file="itraq_results.RData")
-rm(spectrum.count)
+rm(evalue.table)
 gc()
 write.table(quantified, row.names = F, quote=F, file="LabelledQuant.txt", sep = "\t")
 rm(quantified)
