@@ -34,6 +34,8 @@ if os.path.isfile(cfg_file):
 	r_options = get_sc_opts(cfg_file)
 else:
 	write_config(working_dir)
+	r_options = get_sc_opts(cfg_file)
+
 
 ######################## DECOMPRESS ###########################
 spectrum_tmp = []

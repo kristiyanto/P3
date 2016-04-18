@@ -100,13 +100,13 @@ def scan_dir(working_dir):
 ######################## WRITE DEFAULT CONFIG ###########################
 def write_config(working_dir):
 	try:
-		with open(os.path.join(working_dir,"p3.config"),"w") as f
-		f.write("[spectrum_count]\n")
-		f.write("score_treshold = 7.0\n")
-		f.write("error_treshold = 20\n")
-		f.write("fdr = 0.01\n")
-		f.write("iteration = 5000\n")
-		f.close()
+		with open(os.path.join(working_dir,"p3.config"),"w") as f:
+			f.write("[spectrum_count]\n")
+			f.write("score_treshold = 7.0\n")
+			f.write("error_treshold = 20\n")
+			f.write("fdr = 0.01\n")
+			f.write("iteration = 5000\n")
+			f.close()
 		print("Missing p3.config. Default config file written.")
 	except:
 		print("Missing p3.config, and failed to create one.")

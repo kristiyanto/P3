@@ -38,7 +38,7 @@ def get_itraq_opts(cfg_file):
 		return r_options
 	except:
 		print("Configuration File Error.")
-		raise systemExit
+		raise SystemExit
 
 
 def msgf(spectrum, db, out):
@@ -105,13 +105,13 @@ def scan_dir(working_dir):
 ######################## WRITE DEFAULT CONFIG ###########################
 def write_config(working_dir):
 	try:
-		with open(os.path.join(working_dir,"p3.config"),"w") as f
-		f.write("[itraq4]\n")
-		f.write("evalue_treshold = 75\n")
-		f.write("pNA = 0\n")
-		f.write("quant_method = trap\n")
-		f.write("combine_by = mean\n")
-		f.close()
+		with open(os.path.join(working_dir,"p3.config"),"w") as f:
+			f.write("[itraq4]\n")
+			f.write("evalue_treshold = 75\n")
+			f.write("pNA = 0\n")
+			f.write("quant_method = trap\n")
+			f.write("combine_by = mean\n")
+			f.close()
 		print("Missing p3.config. Default config file written.")
 	except:
 		print("Missing p3.config, and failed to create one.")
