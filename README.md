@@ -7,6 +7,7 @@ Currently, there are three containers available:
 #### MSGF+ (Identification)
 Identification tool: Containing [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf) as protein identification. Input: raw files (```*.mzml```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and a dictionary (```*.fasta```) file. Output: ```*.mzid``` for each of raw files provided.
 
+
 To run the container: 
 ```
 docker pull kristiyanto/p3:msgf
@@ -37,6 +38,7 @@ docker run --rm -v /c/Users/path/to/files:/root/data kristiyanto/p3:spectrumcoun
 This container compute proteomics quantification for Labelled proteomics raw data, using iTraq from [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html). Input: raw files (```*.mzml```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and idenfification files (```*.mzid```). Output: ```LabelledQuant.txt``` a tab deliminated file with the protein names and the spectrum counts, and ```evalue.txt``` a tab deliminated file of the evalue of the spectrums for further analysis. 
 
 More detailed information about the pipeline is available [here](itraquant/MANUAL/).
+
 To run the container:
 ```
 docker pull kristiyanto/p3:itraquant
