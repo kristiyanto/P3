@@ -104,9 +104,9 @@ mset <- combineFeatures(mset, groupBy = fData(mset)$accession,
 
 Ground.Truth <- exprs(mset)
 
-write.csv(Ground.Truth, file="Celegans-Aging.csv")
+write.table(Ground.Truth, file="Celegans-Aging.txt", sep="\t")
 
-################################# COMPARE IT WITH RESULTS ######################################################
+################################# COMPARE IT WITH P3 RESULTS ######################################################
 
 To.Compare   <- as.data.frame(read.table(file="SpectrumCount.txt",  stringsAsFactors=FALSE))
 colnames(To.Compare) <- To.Compare[1,]
