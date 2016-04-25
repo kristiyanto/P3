@@ -1,5 +1,5 @@
 #! /bin/bash
-# Based on Script created by Rafael Benevides / rafabene
+# Based on Script written by Rafael Benevides / @rafabene
 # Run this script in connected AWS CLI
 
 export AWS_ACCESS_KEY_ID = REPLACE_WITH_YOUR_AWS_ACCESS_KEY
