@@ -41,7 +41,7 @@ else:
 spectrum_tmp = []
 for src_name in glob.glob(os.path.join(working_dir, '*.gz')):
     base = os.path.basename(src_name)
-    print("Extracting", src_name)
+    # print("Extracting", src_name)
     dest_name = os.path.join(working_dir, base[:-3])
     if not os.path.isfile(dest_name):
     	spectrum_tmp.append(dest_name)
