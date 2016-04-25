@@ -101,24 +101,28 @@ def get_ftp(ftp_url):
 	print(url_host)
 	work_dir 	= os.getcwd()
 	os.chdir(work_dir+"/data")
-	try:
-		ftp 	= FTP(url_host)
-		ftp.login()
-		ftp.cwd(url_path)
-		ftp.retrlines('LIST')
-		filenames = ftp.nlst()
-		print(filenames)
-		filematch = "*.*" #Any files
+	ftp 	= FTP(url_host)
+	ftp.login()
+	ftp.cwd(url_path)
+	ftp.retrlines('LIST')
+	filenames = ftp.nlst()
+	#print(filenames)
+	filematch = "*.*" #Any files
 
-		for filename in ftp.nlst(filematch):
-			if not os.path.isfile(filename):
-		    	fhandle = open(filename, 'wb')
-		    	print('Getting ' + filename)
+	for filename in ftp.nlst(filematch):
+		print("the file name is:{}".format(filename))
+		if os.path.isfile(filename):
+			print("File {} already exists. Skipping..".format(filename))
+		else:
+			try:
+				fhandle = open(filename, 'wb')
+		    	print("Downloading {}".format(filename))
 		    	ftp.retrbinary('RETR ' + filename, fhandle.write)
 		    	fhandle.close()
-		print("FTP Download done.")
-	except Exception:
-		pass
+		    except:
+		    	print("{} failed.".format(filename))
+	print("FTP Download done.")
+	
 	os.chdir(work_dir)
 	return URL
 

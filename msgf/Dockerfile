@@ -1,6 +1,6 @@
 # MSGF
 # Base container
-FROM python:2.7
+FROM python:3.5
 
 # Maintainer
 MAINTAINER Daniel Kristiyanto, daniel.kristiyanto@pnnl.gov
