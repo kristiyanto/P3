@@ -5,3 +5,5 @@ scquant/.Rcache/*
 
 *.history
 *.Rhistory
+
+*.Rcache
