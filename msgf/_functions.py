@@ -111,10 +111,11 @@ def get_ftp(ftp_url):
 		filematch = "*.*" #Any files
 
 		for filename in ftp.nlst(filematch):
-		    fhandle = open(filename, 'wb')
-		    print('Getting ' + filename)
-		    ftp.retrbinary('RETR ' + filename, fhandle.write)
-		    fhandle.close()
+			if not os.path.isfile(filename):
+		    	fhandle = open(filename, 'wb')
+		    	print('Getting ' + filename)
+		    	ftp.retrbinary('RETR ' + filename, fhandle.write)
+		    	fhandle.close()
 		print("FTP Download done.")
 	except Exception:
 		pass
