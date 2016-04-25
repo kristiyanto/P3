@@ -6,7 +6,7 @@ library(MSnbase)
 library(mzID)
 library(stringr)
 
-
+start.time = Sys.time()
 args = commandArgs(trailingOnly=TRUE)
 
 print(args)
@@ -41,31 +41,41 @@ msexp.raw         <- readMSData(mzml.files)
 print("Identifiying...")
 msexp.id          <- addIdentificationData(msexp.raw, id = mzids.raw)
 idSummary(msexp.id)
+rm(mzid.files)
+rm(mzml.files)
+rm(mzids.raw)
+rm(msexp.raw)
+gc(verbose = FALSE)
+
 print("Filtering...")
 k                 <- (fData(msexp.id)$'ms-gf:evalue'< evalue_treshold)
 k[is.na(k)]       <- FALSE
 msexp.filter1     <- removeNoId(msexp.id, keep=k)
 msexp.filter2     <- removeMultipleAssignment(msexp.filter1)
 
-
+rm(msexp.id)
+rm(msexp.filter1)
+gc(verbose = FALSE)
 ####################################### QUANTIFICATION ###################################################
 print("Quantifying...")
 qnt               <- quantify(msexp.filter2, method=quant_method, reporters=iTRAQ4, strict=F, verbose=F)
 qnt.filtered      <- filterNA(qnt, pNA = pNA)
+rm(msexp.filter2)
+rm(qnt)
+gc(verbose = FALSE)
 result            <- combineFeatures(qnt.filtered, groupBy = fData(qnt.filtered)$accession, fun=combine_by)
 
 head(exprs(result))
 ####################################### OUTPUT ###################################################
 print("Writing the output...")
-evalue.table	  <- as.data.frame(merge(fData(qnt.filtered)[,c("spectrum", "pepseq", "idFile", "ms-gf:evalue")], exprs(result), by="row.names"))
-quantified		  <- as.data.frame(cbind(Accession_ID=str_replace(row.names(result),"ref\\|",""),exprs(result)))
+evalue.table	  <- as.data.frame(merge(fData(qnt.filtered)[,c("accession","spectrum", "pepseq", "idFile", "ms-gf:evalue")], exprs(result), by.x ="accession", by.y ="row.names" ))
+quantified		  <- as.data.frame(cbind(Accession_ID=row.names(result),exprs(result)))
 write.table(evalue.table, quote=F, row.names=F, file="evalue.txt", sep ="\t")
-save.image(file="itraq_results.RData")
 rm(evalue.table)
 gc()
 write.table(quantified, row.names = F, quote=F, file="LabelledQuant.txt", sep = "\t")
-rm(quantified)
-gc()
 save(result, file = "msnset.rda")
-
+stop.time = Sys.time()
+rm(result)
+print(paste("Start Time:", start.time," Stop Time:", stop.time, "Elapsed=",stop.time-start.time))
 

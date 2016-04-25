@@ -2,7 +2,7 @@
 # Docker Container: itraquant
 
 # Base container
-FROM bioconductor/devel_proteomics
+FROM bioconductor/release_proteomics
 
 # Maintainer
 MAINTAINER Daniel Kristiyanto, daniel.kristiyanto@pnnl.gov
