@@ -3,8 +3,8 @@ export AWS_SECRET_ACCESS_KEY = REPLACE_WITH_YOUR_SECRET_ACESS_KEY
 export AWS_VPC_ID = REPLACE_WITH_VPC_ID
 export NO_OF_NODES = 3 
 
-if [ -z "$AWS_ACCESS_KEY_ID"  ] || [ -z "$AWS_SECRET_ACCESS_KEY" ] || [ -z "$AWS_VPC_ID" || node]; then
-  echo "set vars AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY and AWS_VPC_ID"
+if [ -z "$AWS_ACCESS_KEY_ID"  ] || [ -z "$AWS_SECRET_ACCESS_KEY" ] || [ -z "$AWS_VPC_ID" ] || [ -z "$NO_OF_NODES" ]; then
+  echo "set vars AWS_ACCESS_KEY_ID , AWS_SECRET_ACCESS_KEY and AWS_VPC_ID and NO_OF_NODES"
   exit 1;
 fi
 
