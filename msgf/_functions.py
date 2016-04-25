@@ -6,14 +6,14 @@ import sys
 import subprocess
 import re
 from os.path import isfile, join
-from urlparse import urlparse
+from urllib.parse import urlparse
 from ftplib import FTP
 
 ######################## SUB PROCESSES ###########################
 
 def touch(fname, times=None):
-    with open(fname, 'a'):
-        os.utime(fname, times)
+	with open(fname, 'a'):
+		os.utime(fname, times)
 
 ######################## SUB PROCESSES ###########################
 
@@ -85,12 +85,12 @@ def scan_dir(working_dir):
 
 def check_url(url):
 	regex = re.compile(
-        r'^(?:ftp)s?://' 
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' 
-        r'localhost|' 
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' 
-        r'(?::\d+)?' 
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+		r'^(?:ftp)s?://' 
+		r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' 
+		r'localhost|' 
+		r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' 
+		r'(?::\d+)?' 
+		r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 	return regex
 
 def get_ftp(ftp_url):
@@ -108,21 +108,18 @@ def get_ftp(ftp_url):
 	filenames = ftp.nlst()
 	#print(filenames)
 	filematch = "*.*" #Any files
-
 	for filename in ftp.nlst(filematch):
-		print("the file name is:{}".format(filename))
 		if os.path.isfile(filename):
 			print("File {} already exists. Skipping..".format(filename))
 		else:
 			try:
 				fhandle = open(filename, 'wb')
-		    	print("Downloading {}".format(filename))
-		    	ftp.retrbinary('RETR ' + filename, fhandle.write)
-		    	fhandle.close()
-		    except:
-		    	print("{} failed.".format(filename))
+				print("Downloading {}".format(filename))
+				ftp.retrbinary('RETR ' + filename, fhandle.write)
+				fhandle.close()
+			except:
+				print("{} failed.".format(filename))
 	print("FTP Download done.")
-	
 	os.chdir(work_dir)
 	return URL
 
