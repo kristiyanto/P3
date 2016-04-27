@@ -138,7 +138,7 @@ def itraq(mzid, options):
     lock = mzid[:-5] + ".rda.tmp"
     out = mzid[:-5]+".rda"
     if os.path.isfile(out) or os.path.isfile(lock):
-        print("{} exists. Skipping".format(lock))
+        print("{} ... next.".format(lock))
     else:
         cmd = ['Rscript', "itraq.R"]
         mzml = ""
@@ -268,7 +268,7 @@ def fetch_ftp(ftp_url):
     print("Downloading...")
     for filename in ftp.nlst(filematch)[0:3]:
         if os.path.isfile(filename):
-            print("{} already exists. Skipping..".format(filename))
+            print("{} already exists. Next..".format(filename))
         else:
             try:
                 fhandle = open(filename, 'wb')
