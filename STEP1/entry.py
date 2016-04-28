@@ -18,6 +18,8 @@ import configparser
 from datetime import datetime
 import time
 from urllib.parse import urlparse
+from datetime import timedelta
+
 
 # Set Env
 working_dir = "/root/data"
@@ -45,7 +47,6 @@ def main():
 	unzip_files()
 
 	# Re-List the files
-	fasta = scan_fasta()
 	sp_files_ext = (".mzml",".mgf",".mzxml",".ms2",".pkl", ".mzXML")
 	spectrum = scan_files(sp_files_ext)
 	
@@ -56,7 +57,8 @@ def main():
 	
 	Q_METHOD = options.get("QUANTIFICATION","METHOD").upper()
 	RUN_MSGF = (options.get("MSGF", "RUN_MSGF").upper() == "YES")
-	
+	fasta = scan_fasta()
+
 
 	# Run MSGF 
 	if fasta and spectrum and RUN_MSGF:
@@ -70,7 +72,11 @@ def main():
 	else:
 		print("Skipping MSGF identification...")
 
-	
+	try:
+		maxwait = options.get("SOURCE", "MAXWAIT")
+		print("Max wait updated to {} seconds".format(maxwait))
+	except:
+		pass
 
 	if Q_METHOD == "SPECTRUM_COUNT":
 		keep_waiting = True
@@ -86,7 +92,7 @@ def main():
 				print("MSGF identification is being run by other containers. Waiting...")
 				if wait > maxwait:
 					keep_waiting = False
-					sys.exit("Had waited for 2 hours. Quitting now. \n Perhaps remove .tmp files and rerun containers?")
+					sys.exit("Had waited for {}s. Quitting now. \n Perhaps remove .tmp files and rerun containers?".format(maxwait))
 				else: wait = wait + 5 
 				time.sleep(5)
 			else:
@@ -104,7 +110,7 @@ def main():
 			print("Identification is being run by other containers. Waiting...")
 			if wait > maxwait:
 				keep_waiting = False
-				sys.exit("Had waited for 2 hours. Quitting now. \n Perhaps remove .tmp files and rerun containers?")
+				sys.exit("Had waited for {} hours. Quitting now. \n Perhaps remove .tmp files and rerun containers?".format(maxwait))
 			else: 
 				wait = wait + 10
 				lock_files = scan_files(".rda.tmp")
@@ -113,7 +119,8 @@ def main():
 		itraq_folding(options)
 
 	stop_time = time.time()
-	print("Finished at: {}".format(str(datetime.now())))
+	elapsed_time = time.time() - start_time
+	print("Started at: {} Finished at: {} Elapsed: {}".format(str(start_time), str(datetime.now()), str(timedelta(seconds=elapsed_time))))
 		
 	
 ################################################ FUNCTIONS  ################################################
@@ -210,11 +217,12 @@ def scquant(mzid_set, options):
 	cmd = ['Rscript', "/root/scquant.R"]
 	for k in opts_set:
 		cmd.append(str(R_OPTS[k]))
-	print(cmd)
-	subprocess.call(cmd)
+	if os.path.isfile("SpectrumCount.txt"):
+		sys.exit("SpectrumCount.txt already exsists. Quitting.")
+	else:
+		print(cmd)
+		subprocess.call(cmd)
 	
-	
-   
 			  
 ################################################ ADMINISTRIVIA  ################################################
 	
@@ -228,11 +236,11 @@ def check_config(cfg):
 		if  global_o and msgf_o and quant_o:
 			return options
 		else:
-			sys.exit()
+			if not global_o: sys.exit("Configuration error: SOURCE. Check p3.config.")
+			if not msgf_o: sys.exit("Configuration error: MSGF. Check p3.config.")
+			if not quant_o: sys.exit("Configuration error: QUANTIFICATION. Check p3.config.")
 	except:
-		if not global_o: sys.exit("Configuration error: SOURCE. Check p3.config.")
-		if not msgf_o: sys.exit("Configuration error: MSGF. Check p3.config.")
-		if not quant_o: sys.exit("Configuration error: QUANTIFICATION. Check p3.config.")
+		sys.exit("Error reading p3.config.")
 				
 def get_files(options):
 	try: 
@@ -334,6 +342,10 @@ def scan_fasta():
 def write_blank_p3(config_file):
 	content = """
 	# This is configuration file for P3. http://github.com/kristiyanto/p3
+	#
+	# MAXWAIT = 10800 # 	Optional. How long the container will wait for other containers 
+	# 						to finish when multiple containers are running concurrently. 
+	# 
 	[SOURCE]
 	# REPO = LOCAL/FTP/PRIDEID
 	REPO = LOCAL
