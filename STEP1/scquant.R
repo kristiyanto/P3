@@ -16,12 +16,23 @@ if (length(args)!=4) {
   iteration       = as.numeric(args[4])
 }
 
+
+
+print("=======================================")
+print("Spectrum Count / Label Free Quantification")
+print("=======================================")
+
+
 print(paste("score_treshold:", score.treshold))
 print(paste("error_treshold:", error.treshold))
 print(paste("fdr:", fdr))
 print(paste("iteration:", iteration))
 
 setwd("/root/data/")
+
+print("=======================================")
+print("Spectrum Count / Label Free Quantification")
+print("=======================================")
 
 mz.files <- list.files(path = ".", pattern ="mzid", all.files = F, 
                        full.names = F, recursive = F, ignore.case = T, include.dirs = F)

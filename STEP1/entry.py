@@ -211,7 +211,6 @@ def scquant(mzid_set, options):
 	for k in opts_set:
 		cmd.append(str(R_OPTS[k]))
 	print(cmd)
-
 	subprocess.call(cmd)
 	
 	

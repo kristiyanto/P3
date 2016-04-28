@@ -22,6 +22,11 @@ if (length(args)!=6) {
   out_file 			= args[6]
 }
 
+print("=======================================")
+print(" iTRAQ4 Quantification")
+print("=======================================")
+
+
 print(paste("evalue_treshold:", evalue_treshold))
 print(paste("pNA:", pNA))
 print(paste("quant_method:", quant_method))
