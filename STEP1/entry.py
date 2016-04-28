@@ -14,14 +14,14 @@ import subprocess
 import re
 import csv
 from ftplib import FTP
-from backports import configparser
+import configparser
 from datetime import datetime
 import time
 from urllib.parse import urlparse
 
 # Set Env
 working_dir = "/root/data"
-working_dir = "/Users/Daniel/Desktop/LABELLED"
+#working_dir = "/Users/Daniel/Desktop/LABELLED"
 config_file = "p3.config"
 maxwait = 3 * 60 * 60 # Wait for 3 hours
 os.chdir(working_dir) if os.path.isdir(working_dir) else sys.exit("{} not found. Please make sure it's properly mounted.".format(working_dir))
@@ -46,27 +46,30 @@ def main():
 
 	# Re-List the files
 	fasta = scan_fasta()
-	
-	spectrum = scan_files((".mzml",".mgf",".mzxml",".ms2",".pkl"))
+	sp_files_ext = (".mzml",".mgf",".mzxml",".ms2",".pkl", ".mzXML")
+	spectrum = scan_files(sp_files_ext)
 	
 	if (len(spectrum)!=0):
 		print("{} Spectrum files found: {}".format(len(spectrum), spectrum))
 	else:
-		print("File not found Accepted files: {}".format(ext))
+		print("No spectrum files found. Accepted format:{} ".format(sp_files_ext))
 	
 	Q_METHOD = options.get("QUANTIFICATION","METHOD").upper()
 	RUN_MSGF = (options.get("MSGF", "RUN_MSGF").upper() == "YES")
 	
-	#print("Running MSGF") if RUN_MSGF else print("Skipping MSGF identification...")
-	
-	
+
 	# Run MSGF 
 	if fasta and spectrum and RUN_MSGF:
+		print("Running MSGF") 
+
 		try:
 			msgf_opts = options.get("MSGF", "MSGF_OPTIONS").upper()
 			if (len_msgf_opts !=0): msgf(spectrum, fasta, options, msgf_opts)
 		except:
 			msgf(spectrum, fasta, options)
+	else:
+		print("Skipping MSGF identification...")
+
 	
 
 	if Q_METHOD == "SPECTRUM_COUNT":
@@ -79,6 +82,7 @@ def main():
 			if len(mzid_set) == 0:
 				sys.exit("No .mzid file found")
 			elif len(scan_files('.mzid.tmp')) != 0: 
+				print("SCAN MZID TMP:" + scan_files('.mzid.tmp'))
 				print("MSGF identification is being run by other containers. Waiting...")
 				if wait > maxwait:
 					keep_waiting = False
@@ -96,7 +100,7 @@ def main():
 		for m in mzid: itraq(m, options)
 		lock_files = scan_files(".rda.tmp")
 		wait = 0
-		while lock_files !=0:
+		while len(lock_files) != 0:
 			print("Identification is being run by other containers. Waiting...")
 			if wait > maxwait:
 				keep_waiting = False
@@ -107,6 +111,9 @@ def main():
 				time.sleep(10)
 		
 		itraq_folding(options)
+
+	stop_time = time.time()
+	print("Finished at: {}".format(str(datetime.now())))
 		
 	
 ################################################ FUNCTIONS  ################################################
@@ -116,9 +123,16 @@ def msgf(spectrum, fasta, options, *opt):
 	for file in spectrum:
 		out = os.path.splitext(file)[0] + ".mzid"
 		lock = out + ".tmp"
-		if (not os.path.isfile(out)) and (not os.path.isfile(lock)):
+		print("(MSGF) Working on: {}".format(file))
+
+		if os.path.isfile(out):
+			print("{} already exists.".format(out))
+		elif os.path.isfile(lock):
+			print("Other container is working on {}. Next...".format(lock))
+		else:
 			try:
 				cmd = ['java', '-Xmx3500M', '-jar', '/root/MSGFPlus.jar', '-s', file, '-d', fasta, '-o', out]
+				print(cmd)
 				if len(opt) != 0: cmd.extend([str(x) for x in opt])
 				touch(lock)
 				subprocess.call(cmd)
@@ -133,29 +147,29 @@ def itraq(mzid, options):
 	ext_set = (".mzXML", ".mzML", ".MZXML", ".mzml", ".MZML", ".mzml")
 	opts_set = ("EVALUE_TRESHOLD", "pNA", "QUANTIFICATION_METHOD")
 	sp_files = scan_files(ext_set)
-	print("Quantifying..")
 	lock = mzid[:-5] + ".rda.tmp"
 	out = mzid[:-5]+".rda"
 	if os.path.isfile(out) or os.path.isfile(lock):
 		print("{} ... next.".format(lock))
 	else:
-		cmd = ['Rscript', "itraq.R"]
+		cmd = ['Rscript', "/root/itraq.R"]
 		mzml = ""
 		for ext in ext_set:
 			m = mzid[:-5] + ext
 			if m in sp_files:
 				mzml = m
-				if os.path.isfile(mzml): 
-					cmd.append(mzml)
-					cmd.append(mzid)
-					opts = get_itraq_opts()
-					for k in opts_set:
-						cmd.append(str(opts[k]))
-					break
+				cmd.append(mzml)
+				cmd.append(mzid)
+				opts = get_itraq_opts(options)
+				for k in opts_set:
+					cmd.append(str(opts[k]))
+				break
+		cmd.append(lock[:-4])
+		print("(ITRAQ) Working on {}".format(ext_set))
 		if len(mzml)!=0: 
-			touch(lock)
 			print("Quantifying:" + mzml)
 			try:
+				touch(lock)
 				print(cmd)
 				subprocess.call(cmd)
 				os.remove(lock)
@@ -172,17 +186,16 @@ def itraq_folding(options):
 def get_pride(prideID):
 	cmd = ['Rscript', "fold.R", c_by]
 	
-def get_itraq_opts():
-	R_OPTS = dict(EVALUE_TRESHOLD= 1, pNA= 0, QUANTIFICATION_METHOD="TRAP")
+def get_itraq_opts(options):
+	R_OPTS = dict(EVALUE_TRESHOLD= 1, pNA= 0, QUANTIFICATION_METHOD="count")
 	for k,v in R_OPTS.items():
-		try: 
+		try:
 			x = options.get("ITRAQ4", k)
 			if len(x) != 0 : R_OPTS[k] = x
 		except:
 			continue
-		finally:
-			print("ITRAQ. {} : {}".format(k, R_OPTS[k]))
-			return R_OPTS             
+	print("ITRAQ. {} : {}".format(k, R_OPTS[k]))
+	return R_OPTS             
 
 			
 def scquant(mzid_set, options):
@@ -194,12 +207,14 @@ def scquant(mzid_set, options):
 			if len(x) != 0 : R_OPTS[k] = x
 		except:
 			continue
-		finally:
-			cmd = ['Rscript', "scquant.R"]
-			for k in opts_set:
-				cmd.append(str(R_OPTS[k]))
+	cmd = ['Rscript', "/root/scquant.R"]
+	for k in opts_set:
+		cmd.append(str(R_OPTS[k]))
 	print(cmd)
-	touch("SC_RESULT.txt")
+
+	subprocess.call(cmd)
+	
+	
    
 			  
 ################################################ ADMINISTRIVIA  ################################################
@@ -293,10 +308,10 @@ def unzip_files():
 						for line in infile:
 							outfile.write(line)
 
-def scan_files(ext=(".mzml",".mgf",".mzxml",".ms2",".pkl")):
+def scan_files(ext):
 	files = []
 	for file in os.listdir(working_dir):
-		if file.lower().endswith(ext):
+		if file.endswith(ext):
 			files.append(file)
 	return files
 
@@ -312,7 +327,7 @@ def scan_fasta():
 		print("Multiple .fasta files found. \n Only {} will be used".format(fasta[0]))
 		return fasta[0]
 	elif (len(fasta) == 0): 
-		print("No Fasta file found.")
+		print("No Fasta file found. MSGF will not be run.")
 	else:
 		print("Fasta file: {}".format(fasta[0]))
 		return fasta[0]
@@ -360,12 +375,14 @@ def write_blank_p3(config_file):
 	ITERATION = 5000
 	
 	[ITRAQ4]
-	# Ignored if QUANTIFICATIN METHOD is not ITRAQ4
+	# Ignored if QUANTIFICATION METHOD is not ITRAQ4
 	# If left blank will be replaced with default
 	# Please check documentation for more detail
 	EVALUE_TRESHOLD = 75
 	pNA = 0
-	QUANTIFICATION_METHOD = TRAP
+	# QUANTIFICATION_METHOD: / trapezoidation / max / sum / SI / SIgi / SIn / SAF / NSAF / count 
+	# *CASE SENSITIVE* 
+	QUANTIFICATION_METHOD = trap
 	COMBINE_BY = mean
 	"""
 	try:
