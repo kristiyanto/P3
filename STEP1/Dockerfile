@@ -9,10 +9,12 @@ MAINTAINER Daniel Kristiyanto, daniel.kristiyanto@pnnl.gov
 WORKDIR /root
 
 # Install Java
-RUN apt-get update
-RUN apt-get -q -y install default-jdk unzip 
-RUN apt-get -q -y install default-jdk unzip python3.5 python3.5-dev g++ build-essential libxml2-dev libcurl4-openssl-dev apt-utils libnetcdf-dev
 
+
+RUN apt-get update
+
+RUN apt-get --fix-missing -q -y install python3-pip python3 build-essential python3-dev default-jdk unzip g++ libxml2-dev libcurl4-openssl-dev apt-utils libnetcdf-dev
+RUN pip3 install -r requirements.txt
 RUN apt-get clean
 ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 
@@ -24,4 +26,4 @@ ADD entry.py /root/
 
 
 # Run on Entrypoint
-CMD python /root/entry.py
+CMD python3 /root/entry.py
