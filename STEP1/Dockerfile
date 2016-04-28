@@ -13,8 +13,7 @@ WORKDIR /root
 
 RUN apt-get update
 
-RUN apt-get --fix-missing -q -y install python3-pip python3 build-essential python3-dev default-jdk unzip g++ libxml2-dev libcurl4-openssl-dev apt-utils libnetcdf-dev
-RUN pip3 install -r requirements.txt
+RUN apt-get --fix-missing -q -y install python3 build-essential python3-dev default-jdk unzip g++ libxml2-dev libcurl4-openssl-dev apt-utils libnetcdf-dev
 RUN apt-get clean
 ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 
