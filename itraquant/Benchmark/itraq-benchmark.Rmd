@@ -66,8 +66,14 @@ head(qnt.merged[,c(cols.p3, "Ion_114", "Ion_115", "Ion_116", "Ion_117")])[1:3,]
 
 To see if the results coherence, correlation among each ions is computed:
 ```{r}
-cor(qnt.merged$iTRAQ4.114, qnt.merged$Ion_114, method = "spearman", "pairwise.complete.obs")
+# Correlation for Ion Reporter 114
+cor(qnt.merged$iTRAQ4.114, qnt.merged$Ion_114, method = "spearman","pairwise.complete.obs")
+# Correlation for Ion Reporter 115
 cor(qnt.merged$iTRAQ4.115, qnt.merged$Ion_115, method = "spearman", "pairwise.complete.obs")
+# Correlation for Ion Reporter 116
 cor(qnt.merged$iTRAQ4.116, qnt.merged$Ion_116, method = "spearman", "pairwise.complete.obs")
+# Correlation for Ion Reporter 117
 cor(qnt.merged$iTRAQ4.117, qnt.merged$Ion_117, method = "spearman", "pairwise.complete.obs")
 ```
+
+# References
