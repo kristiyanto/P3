@@ -1,0 +1,73 @@
+---
+title: | 
+  | Portable Proteomics Pipeline (P3) 
+  | Labelled (iTRAQ4) Benchmark
+author: "Daniel Kristiyanto (daniel.kristiyanto@pnnl.gov)"
+date: \today
+fontsize: 11pt
+output: pdf_document
+bibliography: ../../media/ref.bib
+nocite: |
+  @domon2006mass, @deutsch2010mass, @MSnba83
+csl: ../../media/biomed-central.csl
+header-includes:
+  \usepackage{fancyhdr}
+  \usepackage{graphicx}
+  \usepackage{hyperref}
+  \pagestyle{fancy}
+  \setlength\headheight{28pt}
+  \rhead{\includegraphics[width = .2\textwidth]{../../media/pnnllogo.png}}
+  \fancyfoot[LE,RO]{kristiyanto/p3:benchmark}
+---
+\rule{\textwidth}{1pt}
+
+```{r, warning=FALSE, echo=FALSE, include=FALSE}
+#setwd("~/Documents/GITHUB/P3/itraquant/Benchmark/itraq-benchmark/")
+load("~/Documents/GITHUB/P3/itraquant/Benchmark/itraq-benchmark/itraq-benchmark.RData")
+library(MSnbase)
+library(mzID)
+cols. <- c()
+cols <- c("accession", "pepseq", "ms-gf:evalue")
+
+```
+
+
+This document is to benchmark and as a sanity check to the iTRAQ4 method for the Portable Proteomics Pipelines (P3) containers.
+
+## Results from PNNL
+For this first purpose, `r length(mzid.files)` first file TCGA calculated by PNNL used as the comparasion:
+```{r}
+show(mzml.sp)
+dim(msexp.sp) # The size of table
+head(msexp.sp)[1:3,]
+```
+
+## Result from P3 container
+For comparation, `r length(mzml.files )` file were also loaded and then merged with the identification data using the MSnBase package. A similar filter also applied: (1) unidentified spectrum with msgf e-value < `e evalue_treshold` and (2) spectrum with multiple identification were removed
+```{r}
+idSummary(msexp.id)
+dim(fData(msexp.id)) # before filter
+head(fData(msexp.id)[order(fData(msexp.id)[,"scan number(s)"]),])[1:3,cols]
+dim(fData(msexp.filter2)) # After Filter
+head(fData(msexp.id)[order(fData(msexp.filter2)[,"scan number(s)"]),])[1:3,cols]
+```
+
+## Comparing the results
+Here is the results from the P3 container. Quantification used "MAX".
+```{r}
+head(qnt.id[order(qnt.id$accession),])[1:3,cols.p3]
+```
+
+To put in contrast, the data aboved is merged with the data from PNNL. `iTRAQ4.114 - iTRAQ4.114` indicates results from P3, while `Ion_114 - Ion_117` indicate results from PNNL.
+
+```{r}
+head(qnt.merged[,c(cols.p3, "Ion_114", "Ion_115", "Ion_116", "Ion_117")])[1:3,]
+```
+
+To see if the results coherence, correlation among each ions is computed:
+```{r}
+cor(qnt.merged$iTRAQ4.114, qnt.merged$Ion_114, method = "spearman", "pairwise.complete.obs")
+cor(qnt.merged$iTRAQ4.115, qnt.merged$Ion_115, method = "spearman", "pairwise.complete.obs")
+cor(qnt.merged$iTRAQ4.116, qnt.merged$Ion_116, method = "spearman", "pairwise.complete.obs")
+cor(qnt.merged$iTRAQ4.117, qnt.merged$Ion_117, method = "spearman", "pairwise.complete.obs")
+```
