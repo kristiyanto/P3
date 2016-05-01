@@ -58,7 +58,7 @@ Here is the results from the P3 container. Quantification used "MAX".
 head(qnt.id[order(qnt.id$accession),])[1:3,cols.p3]
 ```
 
-To put in contrast, the data aboved is merged with the data from PNNL. `iTRAQ4.114 - iTRAQ4.114` indicates results from P3, while `Ion_114 - Ion_117` indicate results from PNNL.
+To put in contrast, the data aboved is merged with the data from PNNL. `iTRAQ4.114 - iTRAQ4.117` indicates results from P3, while `Ion_114 - Ion_117` indicate results from PNNL.
 
 ```{r}
 head(qnt.merged[,c(cols.p3, "Ion_114", "Ion_115", "Ion_116", "Ion_117")])[1:3,]
