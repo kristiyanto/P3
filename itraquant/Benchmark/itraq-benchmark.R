@@ -8,9 +8,9 @@ library(stringr)
 library(dplyr)
 start.time = Sys.time()
 
-evalue_treshold = 75
+evalue_treshold = 50
 pNA = 0
-quant_method = trap
+quant_method = "max"
 combine_by = mean
 
 ####################################### READ FILE FROM PNNL ###################################################
@@ -44,6 +44,8 @@ msexp.sp.id       <- merge(msexp.sp, mzid.flat, by.x = "ScanNumber", by.y="scan 
 msexp.sp.filtered <- msexp.sp.id[!is.na(msexp.sp.id$accession),]
 msexp.sp.filtered <- msexp.sp.filtered[duplicated(msexp.sp.filtered$accession) & msexp.sp.filtered$`ms-gf:evalue` <evalue_treshold,]
 evalues           <- msexp.sp.filtered$`ms-gf:evalue`
+scan.no = head(mzid.flat[order(mzid.flat$`ms-gf:evalue`),])[1,"scan number(s)"]
+pep  = head(mzid.flat[order(mzid.flat$`ms-gf:evalue`),])[1,"pepseq"]
 ####################################### IDENTIFICATION & FILTERING ###################################################
 
 idSummary(msexp.id)
@@ -53,15 +55,14 @@ k[is.na(k)]       <- FALSE
 msexp.filter1     <- removeNoId(msexp.id, keep=k)
 msexp.filter2     <- removeMultipleAssignment(msexp.filter1)
 
-qnt               <- quantify(msexp.filter2, method="max", reporters=iTRAQ4, strict=F, verbose=F)
+qnt               <- quantify(msexp.filter1, method=quant_method, reporters=iTRAQ4, strict=T, verbose=T)
 
 qnt.id            <- merge(exprs(qnt),fData(qnt), by="row.names")
 
-cols.sp <- c(cols, "Ion_114", "Ion_115", "Ion_116", "Ion_117")
-cols.p3 <- c(cols, "iTRAQ4.114", "iTRAQ4.115", "iTRAQ4.116", "iTRAQ4.117")
+cols.sp <- c("Ion_114", "Ion_115", "Ion_116", "Ion_117")
+cols.p3 <- c("iTRAQ4.114", "iTRAQ4.115", "iTRAQ4.116", "iTRAQ4.117")
 
 msexp.sp.filtered$id_ <- paste(msexp.sp.filtered$ScanNumber, msexp.sp.filtered$pepseq, sep="_")
 qnt.id$id_ <- paste(qnt.id$`scan number(s)`, qnt.id$pepseq, sep="_")
-#qnt.merged        <- merge(qnt.id, msexp.sp.filtered[,c(cols.sp,"ScanNumber")], by.y = "ScanNumber", by.x = "scan number(s)", all.x =T, all.y = F)
 qnt.merged <- merge(qnt.id, msexp.sp, by.x = "scan number(s)", by.y = "ScanNumber", all.x = T, all.y = F)
 save.image("itraq-benchmark.RData")
