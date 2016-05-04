@@ -72,7 +72,7 @@ zoomData
 
 From this table, we know that this peptide was identified from features `r rownames(zoomData)`.
 
-Using the `quantify` function from MSnBase, with parameters `mehod=max, verbose=FALSE, strict=FALSE`, resulting:
+Using the `quantify` function from MSnBase, with parameters `method=``r quant_method`, `verbose=FALSE, strict=FALSE`, resulting:
 
 ```{r}
 ## Features 
@@ -103,7 +103,7 @@ calc.error
 ```
 
 
-Repeating the same process for all of peptides with e-value < 50
+Repeating the same process for all of peptides with e-value < `r evalue_treshold`.
 
 ```{r}
 # Original data
