@@ -24,6 +24,7 @@ ADD MSGFPlus.jar /root/
 ADD entry.py /root/
 ADD itraq.R /root/
 ADD scquant.R /root/
+ADD pride.R /root/
 
 
 # Run on Entrypoint

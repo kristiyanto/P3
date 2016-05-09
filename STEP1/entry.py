@@ -25,11 +25,10 @@ from datetime import timedelta
 working_dir = "/root/data"
 #working_dir = "/Users/Daniel/Desktop/LABELLED"
 config_file = "p3.config"
-maxwait = 3 * 60 * 60 # Wait for 3 hours
 os.chdir(working_dir) if os.path.isdir(working_dir) else sys.exit("{} not found. Please make sure it's properly mounted.".format(working_dir))
 
 def main():
-
+	maxwait = 10800 # Wait for 3 hours
 	start_time = time.time()
 	print("Starting at: {}".format(str(datetime.now())))
 	
@@ -88,7 +87,7 @@ def main():
 			if len(mzid_set) == 0:
 				sys.exit("No .mzid file found")
 			elif len(scan_files('.mzid.tmp')) != 0: 
-				print("SCAN MZID TMP:" + scan_files('.mzid.tmp'))
+				#print("SCAN MZID TMP:" + scan_files('.mzid.tmp'))
 				print("MSGF identification is being run by other containers. Waiting...")
 				if wait > maxwait:
 					keep_waiting = False
@@ -191,7 +190,9 @@ def itraq_folding(options):
 		cmd = ['Rscript', "fold.R", c_by]
 
 def get_pride(prideID):
-	cmd = ['Rscript', "fold.R", c_by]
+	cmd = ['Rscript', "/root/pride.R", prideID]
+	subprocess.call(cmd)
+
 	
 def get_itraq_opts(options):
 	R_OPTS = dict(EVALUE_TRESHOLD= 1, pNA= 0, QUANTIFICATION_METHOD="count")
@@ -222,7 +223,7 @@ def scquant(mzid_set, options):
 	else:
 		print(cmd)
 		subprocess.call(cmd)
-	
+
 			  
 ################################################ ADMINISTRIVIA  ################################################
 	
@@ -347,7 +348,7 @@ def write_blank_p3(config_file):
 	# 						to finish when multiple containers are running concurrently. 
 	# 
 	[SOURCE]
-	# REPO = LOCAL/FTP/PRIDEID
+	# REPO = LOCAL/FTP/PRIDE
 	REPO = LOCAL
 	# If REPO = FTP, at least FTP_1 is required.
 	# e.g: 
