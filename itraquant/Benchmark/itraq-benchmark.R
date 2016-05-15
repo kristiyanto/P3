@@ -8,7 +8,7 @@ library(stringr)
 library(dplyr)
 start.time = Sys.time()
 
-evalue_treshold = 50
+evalue_treshold = 1e-10
 pNA = 0
 quant_method = "max"
 combine_by = mean
@@ -50,14 +50,15 @@ pep  = head(mzid.flat[order(mzid.flat$`ms-gf:evalue`),])[1,"pepseq"]
 
 idSummary(msexp.id)
 print("Filtering...")
-k                 <- (fData(msexp.id)$'ms-gf:evalue'< evalue_treshold)
+k                 <- ((fData(msexp.id)$'ms-gf:evalue')< evalue_treshold)
 k[is.na(k)]       <- FALSE
 msexp.filter1     <- removeNoId(msexp.id, keep=k)
 msexp.filter2     <- removeMultipleAssignment(msexp.filter1)
 
 qnt               <- quantify(msexp.filter1, method=quant_method, reporters=iTRAQ4, strict=T, verbose=T)
+qnt.f             <- filterNA(qnt, pNA = pNA)
 
-qnt.id            <- merge(exprs(qnt),fData(qnt), by="row.names")
+qnt.id           <- merge(exprs(qnt.f),fData(qnt.f), by="row.names")
 
 cols.sp <- c("Ion_114", "Ion_115", "Ion_116", "Ion_117")
 cols.p3 <- c("iTRAQ4.114", "iTRAQ4.115", "iTRAQ4.116", "iTRAQ4.117")
