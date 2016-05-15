@@ -102,25 +102,37 @@ calc.error    <- from.msnbase - from.pnnl
 calc.error
 ```
 
+Some peptides do not have complete (all ions) quantified. Only peptides with complete ions measurements are retained. 
+```{r}
+## Before filtered
+dim(exprs(qnt))
+summary(exprs(qnt))
+## After filtered
+dim(exprs(qnt.f))
+summary(exprs(qnt.f))
+```
 
 Repeating the same process for all of peptides with e-value < `r evalue_treshold`.
 
 ```{r}
 # Original data
-dim(qnt.id)         # From MSXML File e-value < 50
+dim(qnt.id)         # From MSXML File < e-value treshold
 dim(msexp.sp)       # From PNNL (all)
 qnt.merged <- merge(qnt.id, msexp.sp, by.x = "scan number(s)", by.y = "ScanNumber", all.x = T, all.y = F)
 dim(qnt.merged)     # Merged Data (left Join)
 head(qnt.merged[,c(cols.sp, cols.p3)])
 ```
 
-The error/differences (results from MsnBase - results from PNNL):
+The error/differences (results from MsnBase - results from PNNL) / results from PNNL:
+
 ```{r}
 q.Error <- qnt.merged[,c("scan number(s)", "pepseq", "ms-gf:evalue")]
-q.Error <- cbind(q.Error, "errIon114"= qnt.merged$iTRAQ4.114 - qnt.merged$Ion_114, "errIon115"=qnt.merged$iTRAQ4.115 - qnt.merged$Ion_115, "errIon116"=qnt.merged$iTRAQ4.116 - qnt.merged$Ion_116, "errIon117"=qnt.merged$iTRAQ4.117 - qnt.merged$Ion_117)
+q.Error <- cbind(q.Error, "errIon114"= abs(qnt.merged$iTRAQ4.114 - qnt.merged$Ion_114)/qnt.merged$Ion_114, "errIon115"=abs(qnt.merged$iTRAQ4.115 - qnt.merged$Ion_115)/qnt.merged$Ion_115, "errIon116"=abs(qnt.merged$iTRAQ4.116 - qnt.merged$Ion_116)/qnt.merged$Ion_116, "errIon117"=abs(qnt.merged$iTRAQ4.117 - qnt.merged$Ion_117)/qnt.merged$Ion_117)
+#q.Error <- cbind(q.Error, "errIon114"= apply(qnt.merged[,c("iTRAQ4.114","Ion_114") ],2,relError), "errIon115"=apply(qnt.merged[,c("iTRAQ4.115","Ion_115") ],2,relError), "errIon116"=apply(qnt.merged[,c("iTRAQ4.116","Ion_116") ],2,relError), "errIon117"=apply(qnt.merged[,c("iTRAQ4.117","Ion_117") ],2,relError))
 
 head(q.Error[order(q.Error$`ms-gf:evalue`),])
-boxplot(q.Error[,c("errIon114","errIon115","errIon116","errIon117")])
-summary(q.Error[,c("errIon114","errIon115","errIon116","errIon117")])
+boxplot(log10(q.Error[,c("errIon114","errIon115","errIon116","errIon117")]), main="Error (log10) scale.")
+## Error (Real Values)
+summary(log10(q.Error[,c("errIon114","errIon115","errIon116","errIon117")]))
 ```
 # References
