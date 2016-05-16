@@ -46,7 +46,8 @@ def main():
 	unzip_files()
 
 	# Re-List the files
-	sp_files_ext = (".mzml",".mgf",".mzxml",".ms2",".pkl", ".mzXML")
+	sp_files_ext = (".mzXML", ".mzML", ".MZXML", ".mzml", ".MZML", ".mzml", ".mgf",".mzxml",".ms2",".pkl")
+
 	spectrum = scan_files(sp_files_ext)
 	
 	if (len(spectrum)!=0):
@@ -151,7 +152,7 @@ def msgf(spectrum, fasta, options, *opt):
 
 def itraq(mzid, options):
 	ext_set = (".mzXML", ".mzML", ".MZXML", ".mzml", ".MZML", ".mzml")
-	opts_set = ("EVALUE_TRESHOLD", "pNA", "QUANTIFICATION_METHOD")
+	opts_set = ("EVALUE_TRESHOLD", "pNA", "QUANTIFICATION_METHOD", "COMBINE_BY")
 	sp_files = scan_files(ext_set)
 	lock = mzid[:-5] + ".rda.tmp"
 	out = mzid[:-5]+".rda"
@@ -187,7 +188,8 @@ def itraq_folding(options):
 	try: c_by = options.get("ITRAQ4","COMBINE_BY").lower()
 	except: c_by = mean
 	finally:
-		cmd = ['Rscript', "fold.R", c_by]
+		print("")
+		#cmd = ['Rscript', "/root/fold.R", c_by]
 
 def get_pride(prideID):
 	cmd = ['Rscript', "/root/pride.R", prideID]
@@ -195,7 +197,7 @@ def get_pride(prideID):
 
 	
 def get_itraq_opts(options):
-	R_OPTS = dict(EVALUE_TRESHOLD= 1, pNA= 0, QUANTIFICATION_METHOD="count")
+	R_OPTS = dict(EVALUE_TRESHOLD= 1, pNA= 0, QUANTIFICATION_METHOD="sum", COMBINE_BY="mean")
 	for k,v in R_OPTS.items():
 		try:
 			x = options.get("ITRAQ4", k)
@@ -390,11 +392,12 @@ def write_blank_p3(config_file):
 	# Ignored if QUANTIFICATION METHOD is not ITRAQ4
 	# If left blank will be replaced with default
 	# Please check documentation for more detail
-	EVALUE_TRESHOLD = 75
+	EVALUE_TRESHOLD = 1e-10
 	pNA = 0
 	# QUANTIFICATION_METHOD: / trapezoidation / max / sum / SI / SIgi / SIn / SAF / NSAF / count 
 	# *CASE SENSITIVE* 
-	QUANTIFICATION_METHOD = trap
+	QUANTIFICATION_METHOD = max
+	# COMBINE_BY: / mean / median / weighted.mean / sum / medpolish
 	COMBINE_BY = mean
 	"""
 	try:

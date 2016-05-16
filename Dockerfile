@@ -8,12 +8,9 @@ MAINTAINER Daniel Kristiyanto, daniel.kristiyanto@pnnl.gov
 # Main Directory
 WORKDIR /root
 
-# Install Java
-
-
 RUN apt-get update
 
-RUN apt-get --fix-missing -q -y install python3 build-essential python3-dev default-jdk unzip g++ libxml2-dev libcurl4-openssl-dev apt-utils libnetcdf-dev
+RUN apt-get --fix-missing -q -y install apt-utils build-essential python3 default-jdk unzip g++ libxml2-dev libcurl4-openssl-dev libnetcdf-dev
 RUN apt-get clean
 ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
 
@@ -25,6 +22,8 @@ ADD entry.py /root/
 ADD itraq.R /root/
 ADD scquant.R /root/
 ADD pride.R /root/
+ADD install.R /root/
+RUN Rscript /root/install.R
 
 
 # Run on Entrypoint

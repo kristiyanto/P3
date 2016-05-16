@@ -22,7 +22,7 @@ do
 done	
 
 # List of exsisting swarm
-docker run swarm list token://$sid
+docker run --rm swarm list token://$sid
 # Get into the swarm environtment
 eval `docker-machine env --swarm swarm-master`
 docker ps

@@ -1,25 +1,29 @@
 ## Labelled (iTRAQ4) Mass Spectometry Protein Quantification
 ## Docker Package: p3
 ## Daniel Kristiyanto (daniel.kristiyanto@pnnl.gov)
-
-library(MSnbase)
 library(mzID)
+library(MSnbase)
 library(stringr)
+library(BiocParallel)
+
+BiocParallel::register(BiocParallel::SnowParam(2))
+BiocParallel::register(BiocParallel::MulticoreParam(2))
 
 start.time = Sys.time()
 args = commandArgs(trailingOnly=TRUE)
 
 print(args)
 
-if (length(args)!=6) {
-  stop("Arguments ", call.=FALSE)
+if (length(args)!=7) {
+  stop("Arguments.", call.=FALSE)
 } else {
   mzml.files 		= args[1]
   mzid.files 		= args[2]
   evalue_treshold  	= as.double(args[3])
-  pNA 				= as.numeric(args[4])
-  quant_method		= args[5]
-  out_file 			= args[6]
+  pNA 				  = as.numeric(args[4])
+  quant_method	= args[5]
+  combine_by    = args[6]
+  out_file 			= args[7]
 }
 
 print("=======================================")
@@ -30,7 +34,7 @@ print("=======================================")
 print(paste("evalue_treshold:", evalue_treshold))
 print(paste("pNA:", pNA))
 print(paste("quant_method:", quant_method))
-
+print(paste("features combined using:", combine_by))
 
 setwd("/root/data")
 
@@ -71,17 +75,17 @@ rm(msexp.filter2)
 rm(qnt)
 gc(verbose = FALSE)
 save(qnt.filtered, file=out_file)
-#result            <- combineFeatures(qnt.filtered, groupBy = fData(qnt.filtered)$accession, fun=combine_by)
+result            <- combineFeatures(qnt.filtered, groupBy = fData(qnt.filtered)$accession, fun=combine_by)
 
 #head(exprs(result))
 ####################################### OUTPUT ###################################################
 print("Writing the output...")
 #evalue.table	  <- as.data.frame(merge(fData(qnt.filtered)[,c("accession","spectrum", "pepseq", "idFile", "ms-gf:evalue")], exprs(result), by.x ="accession", by.y ="row.names" ))
-#quantified		  <- as.data.frame(cbind(Accession_ID=row.names(result),exprs(result)))
+quantified		  <- as.data.frame(cbind(Accession_ID=row.names(result),exprs(result)))
 #write.table(evalue.table, quote=F, row.names=F, file="evalue.txt", sep ="\t")
 #rm(evalue.table)
 #gc()
-#write.table(quantified, row.names = F, quote=F, file="LabelledQuant.txt", sep = "\t")
+write.table(quantified, row.names = F, quote=F, file=str_replace(out_file,".rda",".txt"), sep = "\t")
 #save(result, file = "msnset.rda")
 stop.time = Sys.time()
 #rm(result)
