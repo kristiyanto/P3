@@ -7,3 +7,7 @@ scquant/.Rcache/*
 *.Rhistory
 
 *.Rcache
+
+Benchmark/iTRAQ4-Benchmark/itraq-benchmark_cache/latex/__packages
+
+Benchmark/iTRAQ4-Benchmark/itraq-benchmark_cache/latex/unnamed-chunk-6_1c4b0adadfb0efa39a13d6eb725b4691.rdx

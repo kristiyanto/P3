@@ -1,12 +1,13 @@
 ---
 title: | 
   | Portable Proteomics Pipeline (P3) 
-  | Labelled (iTRAQ4) Benchmark
+  | MSGF Benchmark
+  | 
 author: "Daniel Kristiyanto (daniel.kristiyanto@pnnl.gov)"
 date: \today
 fontsize: 11pt
 output: pdf_document
-bibliography: ../../media/ref.bib
+# bibliography: ../../media/ref.bib
 nocite: |
   @domon2006mass, @deutsch2010mass, @MSnba83
 csl: ../../media/biomed-central.csl
@@ -21,118 +22,112 @@ header-includes:
 ---
 \rule{\textwidth}{1pt}
 
-```{r, warning=FALSE, echo=FALSE, include=FALSE}
-#setwd("~/Documents/GITHUB/P3/itraquant/Benchmark/itraq-benchmark/")
-load("~/Documents/GITHUB/P3/itraquant/Benchmark/itraq-benchmark/itraq-benchmark.RData")
+```{r, warning=FALSE, echo=FALSE, include=FALSE, cache=T}
+setwd("~/Dropbox/_SPACE/Benchmark/")
+file_mzid        <- list.files(path = ".", pattern ="mzid", all.files = F, 
+                      full.names = F, recursive = F, ignore.case = T, include.dirs = F)
+file_mzml        <- list.files(path = ".", pattern ="mzML$|mzXML$", all.files = F, 
+                      full.names = F, recursive = F, ignore.case = T, include.dirs = F)
+file_fasta        <- list.files(path = ".", pattern ="fasta", all.files = F, 
+                      full.names = F, recursive = F, ignore.case = T, include.dirs = F)
+
 library(MSnbase)
 library(mzID)
-cols <- c("accession", "pepseq", "ms-gf:evalue")
+suppressMessages(library(BiocParallel))
+
+mzid_pnnl <- read.table(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_msgfdb_fht.txt", sep="\t", header=T)
+mzids_no_switch   <- mzID("TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_no_switch.mzid")
+mzid_p3           <- mzID("TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.mzid")
+msexp.raw         <- readMSData(file_mzml)
+msexp_p3          <- addIdentificationData(msexp.raw, id = mzid_p3,verbose=F)
+msexp_no_switch   <- addIdentificationData(msexp.raw, id = mzids_no_switch,verbose=F)
+
+p3_table <- fData(msexp_p3)
+ns_table <- fData(msexp_no_switch)
+```
+
+# 1. Files:
+
+```{r, echo=F}
+show(file_mzml)
+show(file_fasta)
+```
+
+# 2. Identification:
+
+`MSGFPlus.jar` was downloaded from \url{https://omics.pnl.gov/software/ms-gf}. Identification was run multiple times, using different computers (Linux, MacOS, within or without Docker), and resulted the same results. 
+
+Identification with different switches resulted different results.
+
+```
+# Command Line (Without Switch)
+java -Xmx8000M -jar P3/MSGFPlus.jar -s \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.mzML -o \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_no_switch.mzid \
+-d ID_003632_9011437E.fasta  
+
+# Command Line (2)
+java -Xmx8000M -jar P3/MSGFPlus.jar -s \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.mzML -o \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.mzid \
+-d ID_003632_9011437E.fasta  \
+-t 10ppm -m 0 -inst 1 -e 1 -ti -1,2 -ntt 2 -tda 1 -minLength 6 \
+-maxLength 50 -minCharge 2 -maxCharge 5 -n 1 -thread 7 \
+-mod MSGFDB_Mods.txt -minNumPeaks 5 -addFeatures 1
+```
+```{r, echo=F}
+# Identification Result
+show(file_mzid)
+```
+
+#3. Result from PNNL
+```{r, echo=F}
+head(mzid_pnnl)[1:2,c("ResultID", "Scan", "Peptide", "Protein", "MSGFDB_SpecEValue")]
 ```
 
 
+#4. Result from MSGF+ without any switches (sorted by SpecEValue)
+```{r, echo=F}
+tmp           <- ns_table
+tmp           <- tmp[order(tmp$'ms-gf:specevalue'),]
+show(head(tmp[,c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")])[1:3,])
 
-The purpose of this document is to benchmark the iTRAQ quantification on the Portable Proteomics Pipelines (P3) containers.
+## Looking at Scan number 11612 and 14441
+tmp[(tmp$`scan number(s)`=="11612" | tmp$`scan number(s)`=="14441")  &! is.na(tmp$`scan number(s)`),c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")]
+```
 
-# Input
-1. `r mzid.files` : The identification file (product of MSGF+)
-2. `r mzml.files` : The mass spectometry dataset
-3. `r mzml.sp`    : The quantification results used to benchmark (calcullated by PNNL)
+## Reading the MZID file manually
+```
+java -Xmx2000M -XX:+UseConcMarkSweepGC -cp ../P3/MSGFPlus.jar \ 
+edu.ucsd.msjava.ui.MzIDToTsv -i \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_no_switch.mzid \
+-showQValue 1 -showDecoy 1 -unroll 1
+```
+```{r, warning=FALSE, echo=FALSE, include=FALSE, cache=T}
+setwd("~/Dropbox/_SPACE/Benchmark/")
+tsv_ns <- read.table(file ="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_no_switch.tsv", sep="\t",header = T)
 
-# Methods
-## Identification
-```{r}
-## The identification file
-mzids.raw
-head(mzid.flat[order(mzid.flat[,"ms-gf:evalue"]),])[1:3,]
+tsv <- read.table(file ="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.tsv", sep="\t",header = T)
+
+```
+
+```{r, echo=F}
+head(tsv_ns)[1:3,c("ScanNum", "Peptide", "Protein", "SpecEValue")]
 ```
 
 
-Based on this data, peptide `r pep` was listed as a good quality of identification with lowest e-value. 
+# 5. Results with switches (2)
+```{r, echo=F}
+tmp           <- p3_table
+tmp           <- tmp[order(tmp$'ms-gf:specevalue'),]
+show(head(tmp[,c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")])[1:3,])
 
-
-## Spectrum Objects
-```{r}
-msexp.raw
-```
-The spectrum data consists of 1606 percursor ions and with features ranged from X1.1 to x9999.1.
-
-This data then paired with the identification file using `addIdentificationData` tool from MSnBase, resulting the table below:
-```{r}
-### The spectra objects enrinched with identification file
-msexp.id
-idSummary(msexp.id)
-#head(fData(msexp.id))[1:3,]
-```
-
-Table focusing on the peptide `r pep`:
-```{r}
-zoomData <- fData(msexp.id)[fData(msexp.id)$pepseq==pep & !is.na(fData(msexp.id)$pepseq),]
-zoomData
-```
-
-From this table, we know that this peptide was identified from features `r rownames(zoomData)`.
-
-Using the `quantify` function from MSnBase, with parameters `method=``r quant_method`, `verbose=FALSE, strict=FALSE`, resulting:
-
-```{r}
-## Features 
-zoomData[,cols]
-exprs(qnt)[row.names(exprs(qnt))==row.names(zoomData),]
-plot(msexp.id[["X15545.1"]],reporters=iTRAQ4, full=T)
+## Looking at Scan number 11612 and 14441
+tmp[(tmp$`scan number(s)`=="11612" | tmp$`scan number(s)`=="14441")  &! is.na(tmp$`scan number(s)`),c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")]
 ```
 
 
-## Quantification
-This quantification then compared to the quantification data resulted from PNNL, by matching the scan number.
-```{r}
-zoomData$`scan number(s)`
-msexp.sp[msexp.sp$ScanNumber==zoomData$`scan number(s)`,]
+## Reading the MZID file manually
+```{r, echo=F}
+head(tsv)[1:3,c("ScanNum", "Peptide", "Protein", "SpecEValue")]
 ```
-
-
-## Comparasion and error
-The differences between the calculation by MSnBase and by PNNL:
-```{r}
-zoomData$`scan number(s)`
-from.msnbase  <- exprs(qnt)[row.names(zoomData),]
-from.pnnl     <- msexp.sp[msexp.sp$ScanNumber==zoomData$`scan number(s)`,c("Ion_114", "Ion_115","Ion_116", "Ion_117")]
-show(from.msnbase)
-show(from.pnnl)
-calc.error    <- from.msnbase - from.pnnl
-calc.error
-```
-
-Some peptides do not have complete (all ions) quantified. Only peptides with complete ions measurements are retained. 
-```{r}
-## Before filtered
-dim(exprs(qnt))
-summary(exprs(qnt))
-## After filtered
-dim(exprs(qnt.f))
-summary(exprs(qnt.f))
-```
-
-Repeating the same process for all of peptides with e-value < `r evalue_treshold`.
-
-```{r}
-# Original data
-dim(qnt.id)         # From MSXML File < e-value treshold
-dim(msexp.sp)       # From PNNL (all)
-qnt.merged <- merge(qnt.id, msexp.sp, by.x = "scan number(s)", by.y = "ScanNumber", all.x = T, all.y = F)
-dim(qnt.merged)     # Merged Data (left Join)
-head(qnt.merged[,c(cols.sp, cols.p3)])
-```
-
-The error/differences (results from MsnBase - results from PNNL) / results from PNNL:
-
-```{r}
-q.Error <- qnt.merged[,c("scan number(s)", "pepseq", "ms-gf:evalue")]
-q.Error <- cbind(q.Error, "errIon114"= abs(qnt.merged$iTRAQ4.114 - qnt.merged$Ion_114)/qnt.merged$Ion_114, "errIon115"=abs(qnt.merged$iTRAQ4.115 - qnt.merged$Ion_115)/qnt.merged$Ion_115, "errIon116"=abs(qnt.merged$iTRAQ4.116 - qnt.merged$Ion_116)/qnt.merged$Ion_116, "errIon117"=abs(qnt.merged$iTRAQ4.117 - qnt.merged$Ion_117)/qnt.merged$Ion_117)
-#q.Error <- cbind(q.Error, "errIon114"= apply(qnt.merged[,c("iTRAQ4.114","Ion_114") ],2,relError), "errIon115"=apply(qnt.merged[,c("iTRAQ4.115","Ion_115") ],2,relError), "errIon116"=apply(qnt.merged[,c("iTRAQ4.116","Ion_116") ],2,relError), "errIon117"=apply(qnt.merged[,c("iTRAQ4.117","Ion_117") ],2,relError))
-
-head(q.Error[order(q.Error$`ms-gf:evalue`),])
-boxplot(log10(q.Error[,c("errIon114","errIon115","errIon116","errIon117")]), main="Error (log10) scale.")
-## Error (Real Values)
-summary(log10(q.Error[,c("errIon114","errIon115","errIon116","errIon117")]))
-```
-# References

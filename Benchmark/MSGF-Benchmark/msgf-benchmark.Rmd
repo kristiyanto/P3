@@ -1,0 +1,132 @@
+---
+title: | 
+  | Portable Proteomics Pipeline (P3) 
+  | MSGF Benchmark
+author: "Daniel Kristiyanto (daniel.kristiyanto@pnnl.gov)"
+date: \today
+fontsize: 11pt
+output: pdf_document
+# bibliography: ../../media/ref.bib
+nocite: |
+  @domon2006mass, @deutsch2010mass, @MSnba83
+csl: ../../media/biomed-central.csl
+header-includes:
+  \usepackage{fancyhdr}
+  \usepackage{graphicx}
+  \usepackage{hyperref}
+  \pagestyle{fancy}
+  \setlength\headheight{28pt}
+  \rhead{\includegraphics[width = .2\textwidth]{../../media/pnnllogo.png}}
+  \fancyfoot[LE,RO]{kristiyanto/p3:benchmark}
+---
+\rule{\textwidth}{1pt}
+
+```{r, warning=FALSE, echo=FALSE, include=FALSE, cache=T}
+setwd("~/Dropbox/_SPACE/Benchmark/")
+file_mzid        <- list.files(path = ".", pattern ="mzid", all.files = F, 
+                      full.names = F, recursive = F, ignore.case = T, include.dirs = F)
+file_mzml        <- list.files(path = ".", pattern ="mzML$|mzXML$", all.files = F, 
+                      full.names = F, recursive = F, ignore.case = T, include.dirs = F)
+file_fasta        <- list.files(path = ".", pattern ="fasta", all.files = F, 
+                      full.names = F, recursive = F, ignore.case = T, include.dirs = F)
+
+library(MSnbase)
+library(mzID)
+suppressMessages(library(BiocParallel))
+
+mzid_pnnl <- read.table(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_msgfdb_fht.txt", sep="\t", header=T)
+mzids_no_switch   <- mzID("TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_no_switch.mzid")
+mzid_p3           <- mzID("TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.mzid")
+msexp.raw         <- readMSData(file_mzml)
+msexp_p3          <- addIdentificationData(msexp.raw, id = mzid_p3,verbose=F)
+msexp_no_switch   <- addIdentificationData(msexp.raw, id = mzids_no_switch,verbose=F)
+
+p3_table <- fData(msexp_p3)
+ns_table <- fData(msexp_no_switch)
+```
+
+# 1. Files:
+
+```{r, echo=F}
+show(file_mzml)
+show(file_fasta)
+```
+
+# 2. Identification:
+
+`MSGFPlus.jar` was downloaded from \url{https://omics.pnl.gov/software/ms-gf}. Identification was run multiple times (within or without Docker), and resulted the same results. 
+
+Identification with different switches resulted different results.
+
+```
+# Command Line (Without Switch)
+java -Xmx8000M -jar P3/MSGFPlus.jar -s \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.mzML -o \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_no_switch.mzid \
+-d ID_003632_9011437E.fasta  
+
+# Command Line (2)
+java -Xmx8000M -jar P3/MSGFPlus.jar -s \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.mzML -o \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.mzid \
+-d ID_003632_9011437E.fasta  \
+-t 10ppm -m 0 -inst 1 -e 1 -ti -1,2 -ntt 2 -tda 1 -minLength 6 \
+-maxLength 50 -minCharge 2 -maxCharge 5 -n 1 -thread 7 \
+-mod MSGFDB_Mods.txt -minNumPeaks 5 -addFeatures 1
+```
+```{r, echo=F}
+# Identification Result
+show(file_mzid)
+```
+
+#3. Result from PNNL
+```{r, echo=F}
+head(mzid_pnnl)[1:2,c("ResultID", "Scan", "Peptide", "Protein", "MSGFDB_SpecEValue")]
+```
+
+
+#4. Result from MSGF+ without any switches (sorted by SpecEValue)
+```{r, echo=F}
+tmp           <- ns_table
+tmp           <- tmp[order(tmp$'ms-gf:specevalue'),]
+show(head(tmp[,c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")])[1:3,])
+## Looking at Scan Number 11612 and 14441
+tmp[(tmp$`scan number(s)`=="11612" | tmp$`scan number(s)`=="14441")  &! is.na(tmp$`scan number(s)`),c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")]
+```
+
+
+
+Reading the MZID file manually
+```
+java -Xmx2000M -XX:+UseConcMarkSweepGC -cp \ 
+../P3/MSGFPlus.jar edu.ucsd.msjava.ui.MzIDToTsv -i \
+TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_no_switch.mzid \
+-showQValue 1 -showDecoy 1 -unroll 1
+```
+```{r, warning=FALSE, echo=FALSE, include=FALSE, cache=T}
+setwd("~/Dropbox/_SPACE/Benchmark/")
+tsv_ns <- read.table(file ="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_no_switch.tsv", sep="\t",header = T)
+
+tsv <- read.table(file ="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.tsv", sep="\t",header = T)
+
+```
+```{r, echo=F}
+head(tsv_ns)[1:3,c("ScanNum", "Peptide", "Protein", "SpecEValue")]
+```
+
+
+# 5. Results with switches
+```{r, echo=F}
+tmp           <- p3_table
+tmp           <- tmp[order(tmp$'ms-gf:specevalue'),]
+show(head(tmp[,c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")])[1:3,])
+## Looking at Scan Number 11612 and 14441
+tmp[(tmp$`scan number(s)`=="11612" | tmp$`scan number(s)`=="14441") &! is.na(tmp$`scan number(s)`),c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")]
+
+```
+
+
+Reading the MZID file manually
+```{r, echo=F}
+head(tsv)[1:3,c("ScanNum", "Peptide", "Protein", "SpecEValue")]
+```
