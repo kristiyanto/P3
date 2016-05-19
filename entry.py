@@ -63,12 +63,7 @@ def main():
 	# Run MSGF 
 	if fasta and spectrum and RUN_MSGF:
 		print("Running MSGF") 
-
-		try:
-			msgf_opts = options.get("MSGF", "MSGF_OPTIONS").upper()
-			if (len_msgf_opts !=0): msgf(spectrum, fasta, options, msgf_opts)
-		except:
-			msgf(spectrum, fasta, options)
+		msgf(spectrum, fasta, options)
 	else:
 		print("Skipping MSGF identification...")
 
@@ -78,45 +73,47 @@ def main():
 	except:
 		pass
 
-	if Q_METHOD == "SPECTRUM_COUNT":
-		keep_waiting = True
-		wait = 0
-		lock = "SC_RESULT.txt.tmp"
-		if os.path.isfile(lock): sys.exit("Spectrum Count Quantification is already run by other container. Quitting.")
-		while keep_waiting:
-			mzid_set = scan_files((".mzid"))
-			if len(mzid_set) == 0:
-				sys.exit("No .mzid file found")
-			elif len(scan_files('.mzid.tmp')) != 0: 
-				#print("SCAN MZID TMP:" + scan_files('.mzid.tmp'))
-				print("MSGF identification is being run by other containers. Waiting...")
-				if wait > maxwait:
-					keep_waiting = False
-					sys.exit("Had waited for {}s. Quitting now. \n Perhaps remove .tmp files and rerun containers?".format(maxwait))
-				else: wait = wait + 5 
-				time.sleep(5)
-			else:
-				touch(lock)
-				scquant(mzid_set, options)
-				os.remove(lock)
-				keep_waiting = False
+	# if Q_METHOD == "SPECTRUM_COUNT":
+	# 	keep_waiting = True
+	# 	wait = 0
+	# 	lock = "SC_RESULT.txt.tmp"
+	# 	if os.path.isfile(lock): sys.exit("Spectrum Count Quantification is already run by other container. Quitting.")
+	# 	while keep_waiting:
+	# 		mzid_set = scan_files((".mzid"))
+	# 		if len(mzid_set) == 0:
+	# 			sys.exit("No .mzid file found")
+	# 		elif len(scan_files('.mzid.tmp')) != 0: 
+	# 			#print("SCAN MZID TMP:" + scan_files('.mzid.tmp'))
+	# 			print("MSGF identification is being run by other containers. Waiting...")
+	# 			if wait > maxwait:
+	# 				keep_waiting = False
+	# 				sys.exit("Had waited for {}s. Quitting now. \n Perhaps remove .tmp files and rerun containers?".format(maxwait))
+	# 			else: wait = wait + 5 
+	# 			time.sleep(5)
+	# 		else:
+	# 			touch(lock)
+	# 			scquant(mzid_set, options)
+	# 			os.remove(lock)
+	# 			keep_waiting = False
 
-	if Q_METHOD == "ITRAQ4":          
-		mzid = scan_files(".mzid")
-		for m in mzid: itraq(m, options)
-		lock_files = scan_files(".rda.tmp")
-		wait = 0
-		while len(lock_files) != 0:
-			print("Identification is being run by other containers. Waiting...")
-			if wait > maxwait:
-				keep_waiting = False
-				sys.exit("Had waited for {} hours. Quitting now. \n Perhaps remove .tmp files and rerun containers?".format(maxwait))
-			else: 
-				wait = wait + 10
-				lock_files = scan_files(".rda.tmp")
-				time.sleep(10)
+	# if Q_METHOD == "ITRAQ4":          
+	mzid = scan_files(".mzid")
+	for m in mzid: 
+		out2 = os.path.splitext(m)[0] + ".txt"	
+		if not os.path.isfile(out2): itraq(m, options)
+	# 	lock_files = scan_files(".rda.tmp")
+	# 	wait = 0
+	# 	while len(lock_files) != 0:
+	# 		print("Identification is being run by other containers. Waiting...")
+	# 		if wait > maxwait:
+	# 			keep_waiting = False
+	# 			sys.exit("Had waited for {} hours. Quitting now. \n Perhaps remove .tmp files and rerun containers?".format(maxwait))
+	# 		else: 
+	# 			wait = wait + 10
+	# 			lock_files = scan_files(".rda.tmp")
+	# 			time.sleep(10)
 		
-		itraq_folding(options)
+	# 	itraq_folding(options)
 
 	stop_time = time.time()
 	elapsed_time = time.time() - start_time
@@ -126,11 +123,14 @@ def main():
 ################################################ FUNCTIONS  ################################################
 
 def msgf(spectrum, fasta, options, *opt):
-	is_itraq = options.get("QUANTIFICATION","METHOD").upper() == "ITRAQ4"
+	#is_itraq = options.get("QUANTIFICATION","METHOD").upper() == "ITRAQ4"
+	#is_count = options.get("QUANTIFICATION","METHOD").upper() == "SPECTRUM_COUNT"
+	tags = get_msgf_opts(options)
 	for file in spectrum:
 		out = os.path.splitext(file)[0] + ".mzid"
 		lock = out + ".tmp"
-		print("(MSGF) Working on: {}".format(file))
+		out2 = os.path.splitext(file)[0] + ".txt"
+		#print("(MSGF) Working on: {}".format(file))
 
 		if os.path.isfile(out):
 			print("{} already exists.".format(out))
@@ -139,20 +139,19 @@ def msgf(spectrum, fasta, options, *opt):
 		else:
 			try:
 				cmd = ['java', '-Xmx3500M', '-jar', '/root/MSGFPlus.jar', '-s', file, '-d', fasta, '-o', out]
-				print(cmd)
-				if len(opt) != 0: cmd.extend([str(x) for x in opt])
+				if len(tags) != 0: cmd.extend(tags)
 				touch(lock)
+				#print("This is the {}".format(cmd))
 				subprocess.call(cmd)
-				print(str(cmd))
 				os.remove(lock)
 			except:
 				print("MSGF Error: {}".format(file))
-			if is_itraq: itraq(out, options)
+			if not os.path.isfile(out2): itraq(out, options)
 
 
 def itraq(mzid, options):
 	ext_set = (".mzXML", ".mzML", ".MZXML", ".mzml", ".MZML", ".mzml")
-	opts_set = ("EVALUE_TRESHOLD", "pNA", "QUANTIFICATION_METHOD", "COMBINE_BY")
+	opts_set = ("SPECEVALUE_TRESHOLD", "pNA", "QUANTIFICATION_METHOD", "COMBINE_BY")
 	sp_files = scan_files(ext_set)
 	lock = mzid[:-5] + ".rda.tmp"
 	out = mzid[:-5]+".rda"
@@ -167,21 +166,24 @@ def itraq(mzid, options):
 				mzml = m
 				cmd.append(mzml)
 				cmd.append(mzid)
-				opts = get_itraq_opts(options)
+				if(options.get("QUANTIFICATION","METHOD").upper() == "SPECTRUM_COUNT"):
+					opts = get_count_opts(options)	
+				else:
+					opts = get_itraq_opts(options)
 				for k in opts_set:
 					cmd.append(str(opts[k]))
 				break
 		cmd.append(lock[:-4])
-		print("(ITRAQ) Working on {}".format(ext_set))
+		#print(" Working on {}".format(ext_set))
 		if len(mzml)!=0: 
 			print("Quantifying:" + mzml)
 			try:
 				touch(lock)
-				print(cmd)
+				#print(cmd)
 				subprocess.call(cmd)
 				os.remove(lock)
 			except:
-				print("iTRAQ4 quantification failed.")
+				print("Quantification failed.")
    
 
 def itraq_folding(options):
@@ -197,7 +199,34 @@ def get_pride(prideID):
 
 	
 def get_itraq_opts(options):
-	R_OPTS = dict(EVALUE_TRESHOLD= 1, pNA= 0, QUANTIFICATION_METHOD="sum", COMBINE_BY="mean")
+	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0.01, pNA= 4, QUANTIFICATION_METHOD="sum", COMBINE_BY="mean")
+	for k,v in R_OPTS.items():
+		try:
+			x = options.get("ITRAQ4", k)
+			if len(x) != 0 : R_OPTS[k] = x
+		except:
+			continue
+	print("ITRAQ. {} : {}".format(k, R_OPTS[k]))
+	return R_OPTS             
+
+def get_msgf_opts(options):
+	MSGF_OPTS = []
+	tmp = ("-t", "-m", "-inst", "-e", "-ti", "-ntt", "-tda","-minLength","-maxLength","-minCharge","-maxCharge","-n","-thread","-mod","-minNumPeaks","-addFeatures")
+	for k in tmp:
+		try:
+			v = options.get("MSGF", k)
+		except:
+			continue
+		if k == "-mod" and len (v) >0 and not os.path.isfile(v):
+			sys.exit("MSGF Option: {} could not be found.".format(v)) 
+		if len(v) > 0: 
+			MSGF_OPTS.append(k)
+			MSGF_OPTS.append(v)
+	#print(MSGF_OPTS)
+	return MSGF_OPTS
+
+def get_count_opts(options):
+	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0.01, pNA= 4, QUANTIFICATION_METHOD="count", COMBINE_BY="mean")
 	for k,v in R_OPTS.items():
 		try:
 			x = options.get("ITRAQ4", k)
@@ -209,8 +238,8 @@ def get_itraq_opts(options):
 
 			
 def scquant(mzid_set, options):
-	R_OPTS = dict(SCORE_TRESHOLD= 7.0, ERROR_TRESHOLD= 20, FDR=0.001, ITERATION=5000)
-	opts_set = ("SCORE_TRESHOLD", "ERROR_TRESHOLD", "FDR", "ITERATION")
+	R_OPTS = dict(SPEC_EVALUE_TRESHOLD= 1e-10)
+	opts_set = ("SPEC_EVALUE_TRESHOLD")
 	for k,v in R_OPTS.items():
 		try: 
 			x = options.get("SPECTRUM_COUNT", k)
@@ -371,7 +400,23 @@ def write_blank_p3(config_file):
 	# MSGF_OPTIONS: OPTIONAL. Additional options for identification other than -s -d and -o
 	# Check https://omics.pnl.gov/software/ms-gf for more detail
 	# e.g
-	# MSGF_OPTIONS = -t 2.5Da
+
+	# -t = 10ppm 
+	# -m = 0 
+	# -inst = 1 
+	# -e = 1 
+	# -ti = -1,2 
+	# -ntt = 2 
+	# -tda = 1 
+	# -minLength = 6 
+	# -maxLength = 50 
+	# -minCharge = 2 
+	# -maxCharge = 5 
+	# -n = 1 
+	# -thread = 7 
+	# -mod = MSGFDB_Mods.txt 
+	# -minNumPeaks = 5 
+	# -addFeatures = 1
 	
 	[QUANTIFICATION]
 	# METHOD = SPECTRUM_COUNT / ITRAQ4 / NONE 
@@ -383,21 +428,22 @@ def write_blank_p3(config_file):
 	# Ignored if QUANTIFICATION METHOD is not SPECTRUM_COUNT
 	# If left blank will be replaced with default
 	# Please check documentation for more detail
-	SCORE_TRESHOLD = 7.0
-	ERROR_TRESHOLD = 20
-	FDR = 0.01
-	ITERATION = 5000
-	
+	SPEC_EVALUE_TRESHOLD = 1e-10
+	# COMBINE_BY will perform feature folding with the specified function. If "SKIP" is given, this task will not be performed.
+	# COMBINE_BY: SKIP / mean / median / weighted.mean / sum / medpolish
+	COMBINE_BY = mean
+
 	[ITRAQ4]
 	# Ignored if QUANTIFICATION METHOD is not ITRAQ4
 	# If left blank will be replaced with default
 	# Please check documentation for more detail
-	EVALUE_TRESHOLD = 1e-10
-	pNA = 0
-	# QUANTIFICATION_METHOD: / trapezoidation / max / sum / SI / SIgi / SIn / SAF / NSAF / count 
+	SPEC_EVALUE_TRESHOLD = 1e-10
+	pNA = 4
+	# QUANTIFICATION_METHOD: / trapezoidation / max / sum / SI / SIgi / SIn / SAF / NSAF  
 	# *CASE SENSITIVE* 
 	QUANTIFICATION_METHOD = max
-	# COMBINE_BY: / mean / median / weighted.mean / sum / medpolish
+	# COMBINE_BY will perform feature folding with the specified function. If "SKIP" is given, this task will not be performed.
+	# COMBINE_BY: SKIP / mean / median / weighted.mean / sum / medpolish
 	COMBINE_BY = mean
 	"""
 	try:

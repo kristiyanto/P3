@@ -23,7 +23,7 @@ ADD itraq.R /root/
 ADD scquant.R /root/
 ADD pride.R /root/
 ADD install.R /root/
-RUN Rscript /root/install.R
+#RUN Rscript /root/install.R
 
 
 # Run on Entrypoint
