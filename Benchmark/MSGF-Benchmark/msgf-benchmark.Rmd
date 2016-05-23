@@ -302,7 +302,7 @@ There are ```r nrow(pnnl_tmp)``` rows remained.
 
 ### From Docker 
 ```{r echo=F}
-tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq")])
+tmp <- (p3_table[!is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq")])
 tmp <- tmp[order(tmp$`ms-gf:specevalue`),]
 print("==Head==")
 head(tmp,2)
@@ -315,7 +315,7 @@ bt_tmp <- bt_tmp[order(bt_tmp$`ms-gf:specevalue`, decreasing = F),]
 There are ```r nrow(tmp)``` rows remained.
 
 ### Differences
-Data from Docker is matched with from PNNL using scan number as ID. `r names(bt_tmp)[2:4]` are values from Docker, `r names(bt_tmp)[5:7]` are the corresponding values from PNNL. There are `r nrow(bt_tmp)` of rows in total with  `r sum(is.na(bt_tmp$'ms-gf:specevalue'))` of NULL/unmapped values.
+Data from Docker is matched with from PNNL using scan number as ID. `r names(bt_tmp)[2:3]` are values from Docker, `r names(bt_tmp)[4:5]` are the corresponding values from PNNL. There are `r nrow(bt_tmp)` of rows in total with  `r sum(is.na(bt_tmp$'ms-gf:specevalue'))` of NULL/unmapped values.
 
 ```{r, echo=F}
 tmp_nona <- tmp[!is.na(tmp),]
