@@ -88,9 +88,9 @@ show(file_mzid)
 ```{r, echo = F, include=F}
 library(mzID)
 evalue = 1e-10
-pnnl <- mzid_pnnl[, c("Scan", "MSGFDB_SpecEValue", "Peptide", "Protein")]
+pnnl <- mzid_pnnl[, c("Scan", "MSGFDB_SpecEValue", "Peptide")]
 p3_flt <- flatten(mzid_p3)
-bigmzid <- merge(pnnl, p3_table[, c("scan number(s)", "ms-gf:specevalue", "pepseq", "accession")], by.x="Scan", by.y = "scan number(s)", all.x = T)
+bigmzid <- merge(pnnl, p3_table[, c("scan number(s)", "ms-gf:specevalue", "pepseq")], by.x="Scan", by.y = "scan number(s)", all.x = T, all.y = T)
 ```
 
 #3. Result from PNNL
@@ -106,9 +106,9 @@ tail(pnnl,2)
 ```{r, echo=F}
 tmp           <- ns_table
 tmp           <- tmp[order(tmp$'ms-gf:specevalue'),]
-show(head(tmp[,c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")])[1:3,])
+show(head(tmp[,c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue",  "pepseq")])[1:3,])
 ## Looking at Scan Number 11612 and 14441
-tmp[(tmp$`scan number(s)`=="11612" | tmp$`scan number(s)`=="14441")  &! is.na(tmp$`scan number(s)`),c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")]
+tmp[(tmp$`scan number(s)`=="11612" | tmp$`scan number(s)`=="14441")  &! is.na(tmp$`scan number(s)`),c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "pepseq")]
 ```
 
 
@@ -129,7 +129,7 @@ head(tsv_ns)[1:3,c("ScanNum", "Peptide", "Protein", "SpecEValue")]
 ```{r, echo=F}
 tmp           <- p3_table
 tmp           <- tmp[order(tmp$'ms-gf:specevalue'),]
-show(head(tmp[,c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")])[1:3,])
+show(head(tmp[,c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "pepseq")])[1:3,])
 ## Looking at Scan Number 11612 and 14441
 tmp[(tmp$`scan number(s)`=="11612" | tmp$`scan number(s)`=="14441") &! is.na(tmp$`scan number(s)`),c("scan number(s)", "ms-gf:denovoscore", "ms-gf:specevalue", "accession", "pepseq")]
 
@@ -138,7 +138,7 @@ tmp[(tmp$`scan number(s)`=="11612" | tmp$`scan number(s)`=="14441") &! is.na(tmp
 
 Reading the MZID file manually
 ```{r, echo=F}
-head(tsv)[1:3,c("ScanNum", "Peptide", "Protein", "SpecEValue")]
+head(tsv)[1:3,c("ScanNum", "Peptide", "SpecEValue")]
 ```
 
 # 6. Filtering
@@ -160,7 +160,7 @@ There are ```r nrow(pnnl_tmp)``` rows remained.
 
 ### From Docker 
 ```{r echo=F}
-tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq", "accession")])
+tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq")])
 tmp <- tmp[order(tmp$`ms-gf:specevalue`),]
 print("==Head==")
 head(tmp,2)
@@ -207,7 +207,7 @@ There are ```r nrow(pnnl_tmp)``` rows remained.
 
 ### From Docker 
 ```{r echo=F}
-tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq", "accession")])
+tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq")])
 tmp <- tmp[order(tmp$`ms-gf:specevalue`),]
 print("==Head==")
 head(tmp,2)
@@ -253,7 +253,7 @@ There are ```r nrow(pnnl_tmp)``` rows remained.
 
 ### From Docker 
 ```{r echo=F}
-tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq", "accession")])
+tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq")])
 tmp <- tmp[order(tmp$`ms-gf:specevalue`),]
 print("==Head==")
 head(tmp,2)
@@ -282,3 +282,52 @@ print("==Tail==")
 tail(bt_tmp,2)
 ```
 
+
+# 7. Filtering
+```{r, include=F}
+pnnl$Peptide <- substr(as.character(pnnl$Peptide),1,nchar(as.character(pnnl$Peptide))-2)
+pnnl$Peptide <- substr(as.character(pnnl$Peptide),3,nchar(as.character(pnnl$Peptide)))
+```
+
+# a Spec-Evalue `r evalue`
+### From PNNL
+```{r, echo =F}
+pnnl_tmp <- pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
+print("==Head==")
+head(pnnl_tmp,2)
+print("==Tail==")
+tail(pnnl_tmp,2)
+```
+There are ```r nrow(pnnl_tmp)``` rows remained.
+
+### From Docker 
+```{r echo=F}
+tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq")])
+tmp <- tmp[order(tmp$`ms-gf:specevalue`),]
+print("==Head==")
+head(tmp,2)
+print("==Tail==")
+tail(tmp,2)
+
+bt_tmp <- merge(y =  tmp, x=pnnl, by.x = "Scan", by.y  =  "scan number(s)", all.x = T)
+bt_tmp <- bt_tmp[order(bt_tmp$`ms-gf:specevalue`, decreasing = F),]
+```
+There are ```r nrow(tmp)``` rows remained.
+
+### Differences
+Data from Docker is matched with from PNNL using scan number as ID. `r names(bt_tmp)[2:4]` are values from Docker, `r names(bt_tmp)[5:7]` are the corresponding values from PNNL. There are `r nrow(bt_tmp)` of rows in total with  `r sum(is.na(bt_tmp$'ms-gf:specevalue'))` of NULL/unmapped values.
+
+```{r, echo=F}
+tmp_nona <- tmp[!is.na(tmp),]
+```
+
+Aside from the `r sum(is.na(bt_tmp$'ms-gf:specevalue'))` unmatched values, `r sum(tmp_nona$'ms-gf:specevalue'!=tmp_nona$MSGFDB_SpecEValue)` unmacthed spec-evalue, `r sum(tmp_nona$pepseq!=tmp_nona$Peptide)` of unmatched peptide identification.
+
+```{r echo=F}
+print("==Head==")
+head(bt_tmp,2)
+print("==Unmatched==")
+head(bt_tmp[is.na(bt_tmp$'ms-gf:specevalue'),],3)
+print("==Tail==")
+tail(bt_tmp,2)
+```
