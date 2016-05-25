@@ -188,7 +188,7 @@ tail(bt_tmp,2)
 ### Differences
 Data from Docker is matched with from PNNL using scan number as ID. `r names(bt_tmp)[2:3]` are values from PNNL. `r names(bt_tmp)[4:5]` are the corresponding values from Docker Container. There are `r nrow(bt_tmp)` of rows in total with   `r nrow(the_x)` exact match.
 
-Aside from the `r nrow(tmp_nona)` unmatched values, `r nrow(the_y)` with the same peptide identification and different spec-evalue, `r nrow(the_z)` of different peptide identification as well different spec-evalues.
+`r nrow(the_y)` with the same peptide identification and different spec-evalue, `r nrow(the_z)` of different peptide identification as well different spec-evalues (`r nrow(tmp_nona)` of them are unmatched values).
 
 ```{r echo=F}
 print("==Unmatched==")
