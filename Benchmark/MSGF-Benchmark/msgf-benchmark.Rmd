@@ -199,3 +199,109 @@ print("==Different Peptides identification and different Spec Evalues==")
 head(the_z,2)
 
 ```
+
+
+
+```{r no 7b, echo=F}
+############# 7b##########################
+evalue = 1e-15
+```
+
+# b. Spec-Evalue `r evalue`
+### From PNNL
+```{r, echo =F}
+pnnl_tmp <- pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
+```
+There are ```r nrow(pnnl_tmp)``` rows remained.
+
+### From Docker 
+```{r echo=F}
+tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq")])
+tmp <- tmp[order(tmp$`ms-gf:specevalue`),]
+
+bt_tmp <- merge.data.frame(y =  p3_table[,c("scan number(s)", "ms-gf:specevalue", "pepseq")], x=pnnl_tmp, by.x = "Scan", by.y  =  "scan number(s)", all.x = T, all.y = F)
+bt_tmp <- bt_tmp[order(bt_tmp$`ms-gf:specevalue`, decreasing = F),]
+tmp_nona <- bt_tmp[is.na(bt_tmp$'ms-gf:specevalue'),]
+tmp_nona <- tmp_nona[order(tmp_nona$MSGFDB_SpecEValue, decreasing = F),]
+bt_tmp <- bt_tmp[!is.na(bt_tmp$'pepseq'),]
+the_x = bt_tmp[((bt_tmp$'ms-gf:specevalue'==bt_tmp$MSGFDB_SpecEValue) & (bt_tmp$pepseq==bt_tmp$Peptide)),]
+the_y = bt_tmp[((bt_tmp$'ms-gf:specevalue'!=bt_tmp$MSGFDB_SpecEValue) & (bt_tmp$pepseq==bt_tmp$Peptide)),]
+the_z = bt_tmp[((bt_tmp$'ms-gf:specevalue'!=bt_tmp$MSGFDB_SpecEValue) & (bt_tmp$pepseq!=bt_tmp$Peptide)),]
+
+```
+There are ```r nrow(tmp)``` rows remained.
+
+```{r echo=F}
+print("==Head==")
+head(bt_tmp,2)
+print("==Tail==")
+tail(bt_tmp,2)
+```
+
+### Differences
+Data from Docker is matched with from PNNL using scan number as ID. `r names(bt_tmp)[2:3]` are values from PNNL. `r names(bt_tmp)[4:5]` are the corresponding values from Docker Container. There are `r nrow(bt_tmp)` of rows in total with   `r nrow(the_x)` exact match.
+
+`r nrow(the_y)` with the same peptide identification and different spec-evalue, `r nrow(the_z)` of different peptide identification as well different spec-evalues (`r nrow(tmp_nona)` of them are unmatched values).
+
+```{r echo=F}
+print("==Unmatched==")
+head(tmp_nona,2)
+print("==Different Spec eValues==")
+head(the_y,2)
+print("==Different Peptides identification and different Spec Evalues==")
+head(the_z,2)
+
+```
+
+
+
+```{r no 7c, echo=F}
+############# 7c##########################
+evalue = 1e-20
+```
+
+# c. Spec-Evalue `r evalue`
+### From PNNL
+```{r, echo =F}
+pnnl_tmp <- pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
+```
+There are ```r nrow(pnnl_tmp)``` rows remained.
+
+### From Docker 
+```{r echo=F}
+tmp <- (p3_table[p3_table$'ms-gf:specevalue'<evalue & !is.na(p3_table$'ms-gf:specevalue'<evalue),c("scan number(s)", "ms-gf:specevalue", "pepseq")])
+tmp <- tmp[order(tmp$`ms-gf:specevalue`),]
+
+bt_tmp <- merge.data.frame(y =  p3_table[,c("scan number(s)", "ms-gf:specevalue", "pepseq")], x=pnnl_tmp, by.x = "Scan", by.y  =  "scan number(s)", all.x = T, all.y = F)
+bt_tmp <- bt_tmp[order(bt_tmp$`ms-gf:specevalue`, decreasing = F),]
+tmp_nona <- bt_tmp[is.na(bt_tmp$'ms-gf:specevalue'),]
+tmp_nona <- tmp_nona[order(tmp_nona$MSGFDB_SpecEValue, decreasing = F),]
+bt_tmp <- bt_tmp[!is.na(bt_tmp$'pepseq'),]
+the_x = bt_tmp[((bt_tmp$'ms-gf:specevalue'==bt_tmp$MSGFDB_SpecEValue) & (bt_tmp$pepseq==bt_tmp$Peptide)),]
+the_y = bt_tmp[((bt_tmp$'ms-gf:specevalue'!=bt_tmp$MSGFDB_SpecEValue) & (bt_tmp$pepseq==bt_tmp$Peptide)),]
+the_z = bt_tmp[((bt_tmp$'ms-gf:specevalue'!=bt_tmp$MSGFDB_SpecEValue) & (bt_tmp$pepseq!=bt_tmp$Peptide)),]
+
+```
+There are ```r nrow(tmp)``` rows remained.
+
+```{r echo=F}
+print("==Head==")
+head(bt_tmp,2)
+print("==Tail==")
+tail(bt_tmp,2)
+```
+
+### Differences
+Data from Docker is matched with from PNNL using scan number as ID. `r names(bt_tmp)[2:3]` are values from PNNL. `r names(bt_tmp)[4:5]` are the corresponding values from Docker Container. There are `r nrow(bt_tmp)` of rows in total with   `r nrow(the_x)` exact match.
+
+`r nrow(the_y)` with the same peptide identification and different spec-evalue, `r nrow(the_z)` of different peptide identification as well different spec-evalues (`r nrow(tmp_nona)` of them are unmatched values).
+
+```{r echo=F}
+print("==Unmatched==")
+head(tmp_nona,2)
+print("==Different Spec eValues==")
+head(the_y,2)
+print("==Different Peptides identification and different Spec Evalues==")
+head(the_z,2)
+
+```
