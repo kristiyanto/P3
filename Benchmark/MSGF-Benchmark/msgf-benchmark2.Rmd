@@ -100,6 +100,7 @@ m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all=T)
 same      <- m_table[(m_table$MSGFDB_SpecEValue==m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
 same      <- same[!is.na(same$Scan),]
 print(paste("Exact match:", nrow(same)))
+print(paste("From PNNL:", names(same)[2],names(same)[3],". From Docker:", names(same)[4],names(same)[5]))
 print(head(same,2))
 diff_spec <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
 diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
@@ -116,7 +117,7 @@ tail(diff_pep,3)
 evalue = 1e-15
 ```
 
-#3. Differences. Spec eValue = `r evalue` 
+#4. Differences. Spec eValue = `r evalue` 
 ### a. From PNNL
 ```{r, echo=F}
 c_pnnl = pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
@@ -147,6 +148,7 @@ m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all=T)
 same      <- m_table[(m_table$MSGFDB_SpecEValue==m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
 same      <- same[!is.na(same$Scan),]
 print(paste("Exact match:", nrow(same)))
+print(paste("From PNNL:", names(same)[2],names(same)[3],". From Docker:", names(same)[4],names(same)[5]))
 print(head(same,2))
 diff_spec <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
 diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
@@ -163,7 +165,7 @@ tail(diff_pep,3)
 evalue = 1e-20
 ```
 
-#3. Differences. Spec eValue = `r evalue` 
+#5. Differences. Spec eValue = `r evalue` 
 ### a. From PNNL
 ```{r, echo=F}
 c_pnnl = pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
@@ -194,6 +196,7 @@ m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all=T)
 same      <- m_table[(m_table$MSGFDB_SpecEValue==m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
 same      <- same[!is.na(same$Scan),]
 print(paste("Exact match:", nrow(same)))
+print(paste("From PNNL:", names(same)[2],names(same)[3],". From Docker:", names(same)[4],names(same)[5]))
 print(head(same,2))
 diff_spec <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
 diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
