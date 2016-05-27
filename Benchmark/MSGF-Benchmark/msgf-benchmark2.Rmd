@@ -69,7 +69,7 @@ TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.mzid \
 evalue = 1e-10
 ```
 
-#3. Differences. Spec eValue = `r evalue` 
+#3. Differences. Spec eValue Threshold= `r evalue` 
 ### a. From PNNL
 ```{r, echo=F}
 c_pnnl = pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
@@ -117,7 +117,7 @@ tail(diff_pep,3)
 evalue = 1e-15
 ```
 
-#4. Differences. Spec eValue = `r evalue` 
+#4. Differences. Spec eValue Threshold = `r evalue` 
 ### a. From PNNL
 ```{r, echo=F}
 c_pnnl = pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
@@ -165,7 +165,7 @@ tail(diff_pep,3)
 evalue = 1e-20
 ```
 
-#5. Differences. Spec eValue = `r evalue` 
+#5. Differences. Spec eValue Threshold = `r evalue` 
 ### a. From PNNL
 ```{r, echo=F}
 c_pnnl = pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
