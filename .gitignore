@@ -9,7 +9,7 @@ scquant/.Rcache/*
 *.Rcache
 
 Benchmark/iTRAQ4-Benchmark/itraq-benchmark_cache/*
-
-
+Benchmark/MSGF-Benchmark/msgf-benchmark2_cache/*
+Benchmark/MSGF-Benchmark/msgf-benchmark_copy_cache/*
 
 Benchmark/MSGF-Benchmark/msgf-benchmark_cache/*
