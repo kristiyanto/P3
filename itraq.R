@@ -59,14 +59,18 @@ msexp.id          <- addIdentificationData(msexp.raw, id = mzid.files,verbose=F)
 idSummary(msexp.id)
 rm(mzid.files)
 rm(mzml.files)
-#rm(mzids.raw)
 rm(msexp.raw)
 gc(verbose = FALSE)
 
-print("Filtering...")
-k                 <- (fData(msexp.id)$'ms-gf:specevalue'< specvalue_threshold)
-k[is.na(k)]       <- FALSE
-msexp.filter1     <- removeNoId(msexp.id, keep=k)
+if(specvalue_threshold==0)
+{
+  msexp.filter1     <- msexp.id
+} else {
+  print("Filtering...")
+  k                 <- (fData(msexp.id)$'ms-gf:specevalue'< specvalue_threshold)
+  k[is.na(k)]       <- FALSE
+  msexp.filter1     <- removeNoId(msexp.id, keep=k)
+} 
 
 rm(msexp.id)
 gc(verbose = FALSE)

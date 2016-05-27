@@ -73,9 +73,10 @@ evalue = 1e-10
 ### a. From PNNL
 ```{r, echo=F}
 c_pnnl = pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
-# No of remaining scans 
-nrow(c_pnnl)
+print(paste("Remaining peptides:",nrow(c_pnnl)))
+print("====== head ======")
 head(c_pnnl,2)
+print("====== tail ======")
 tail(c_pnnl,2)
 
 ```
@@ -84,9 +85,10 @@ tail(c_pnnl,2)
 ### a. From Docker
 ```{r, echo=F}
 c_docker = docker[docker$Spec_Evalue<evalue,]
-# No of remaining scans 
-nrow(c_docker)
+print(paste("Remaining peptides:",nrow(c_docker)))
+print("====== head ======")
 head(c_docker,2)
+print("====== tail ======")
 tail(c_docker,2)
 ```
 

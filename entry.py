@@ -226,7 +226,7 @@ def get_msgf_opts(options):
 	return MSGF_OPTS
 
 def get_count_opts(options):
-	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0.01, pNA= 4, QUANTIFICATION_METHOD="count", COMBINE_BY="mean")
+	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="count", COMBINE_BY="mean")
 	for k,v in R_OPTS.items():
 		try:
 			x = options.get("ITRAQ4", k)
@@ -238,7 +238,7 @@ def get_count_opts(options):
 
 			
 def scquant(mzid_set, options):
-	R_OPTS = dict(SPEC_EVALUE_TRESHOLD= 1e-10)
+	R_OPTS = dict(SPEC_EVALUE_TRESHOLD= 0)
 	opts_set = ("SPEC_EVALUE_TRESHOLD")
 	for k,v in R_OPTS.items():
 		try: 
@@ -426,8 +426,7 @@ def write_blank_p3(config_file):
 	
 	[SPECTRUM_COUNT]
 	# Ignored if QUANTIFICATION METHOD is not SPECTRUM_COUNT
-	# If left blank will be replaced with default
-	# Please check documentation for more detail
+	# If left blank filtering will not be performed
 	SPEC_EVALUE_TRESHOLD = 1e-10
 	# COMBINE_BY will perform feature folding with the specified function. If "SKIP" is given, this task will not be performed.
 	# COMBINE_BY: SKIP / mean / median / weighted.mean / sum / medpolish
@@ -435,8 +434,7 @@ def write_blank_p3(config_file):
 
 	[ITRAQ4]
 	# Ignored if QUANTIFICATION METHOD is not ITRAQ4
-	# If left blank will be replaced with default
-	# Please check documentation for more detail
+	# If left blank filtering will not be performed
 	SPEC_EVALUE_TRESHOLD = 1e-10
 	pNA = 4
 	# QUANTIFICATION_METHOD: / trapezoidation / max / sum / SI / SIgi / SIn / SAF / NSAF  
