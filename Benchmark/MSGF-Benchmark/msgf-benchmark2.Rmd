@@ -26,7 +26,7 @@ library(mzID)
 library(stringr)
 ```
 
-```{r, warning=FALSE, echo=FALSE, include=FALSE, cache=T}
+```{r, warning=FALSE, echo=FALSE, include=FALSE, cache=F}
 setwd("~/Dropbox/_SPACE/Benchmark/11")
 file_mzid        <- list.files(path = ".", pattern ="mzid", all.files = F, 
                       full.names = F, recursive = F, ignore.case = T, include.dirs = F)
@@ -74,21 +74,134 @@ evalue = 1e-10
 ```{r, echo=F}
 c_pnnl = pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
 print(paste("Remaining peptides:",nrow(c_pnnl)))
-print("====== head ======")
-head(c_pnnl,2)
-print("====== tail ======")
-tail(c_pnnl,2)
+# print("====== head ======")
+# head(c_pnnl,2)
+# print("====== tail ======")
+# tail(c_pnnl,2)
 
 ```
 
 
-### a. From Docker
+### b. From Docker
 ```{r, echo=F}
 c_docker = docker[docker$Spec_Evalue<evalue,]
+c_docker = c_docker[!is.na(c_docker$Scan),]
+c_docker = c_docker[order(c_docker$Spec_Evalue, decreasing = F),]
 print(paste("Remaining peptides:",nrow(c_docker)))
-print("====== head ======")
-head(c_docker,2)
-print("====== tail ======")
-tail(c_docker,2)
+# print("====== head ======")
+# head(c_docker,2)
+# print("====== tail ======")
+# tail(c_docker,2)
+```
+
+### c. Differences
+```{r echo=F}
+m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all=T)
+same      <- m_table[(m_table$MSGFDB_SpecEValue==m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
+same      <- same[!is.na(same$Scan),]
+print(paste("Exact match:", nrow(same)))
+print(head(same,2))
+diff_spec <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
+diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
+print(paste("Different Spec eValue:", nrow(diff_spec)))
+tail(diff_spec,3)
+diff_pep  <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide!=m_table$PepSeq),]
+diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
+print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
+tail(diff_pep,3)
+```
+
+
+```{r, echo = F, include=F}
+evalue = 1e-15
+```
+
+#3. Differences. Spec eValue = `r evalue` 
+### a. From PNNL
+```{r, echo=F}
+c_pnnl = pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
+print(paste("Remaining peptides:",nrow(c_pnnl)))
+# print("====== head ======")
+# head(c_pnnl,2)
+# print("====== tail ======")
+# tail(c_pnnl,2)
+
+```
+
+
+### b. From Docker
+```{r, echo=F}
+c_docker = docker[docker$Spec_Evalue<evalue,]
+c_docker = c_docker[!is.na(c_docker$Scan),]
+c_docker = c_docker[order(c_docker$Spec_Evalue, decreasing = F),]
+print(paste("Remaining peptides:",nrow(c_docker)))
+# print("====== head ======")
+# head(c_docker,2)
+# print("====== tail ======")
+# tail(c_docker,2)
+```
+
+### c. Differences
+```{r echo=F}
+m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all=T)
+same      <- m_table[(m_table$MSGFDB_SpecEValue==m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
+same      <- same[!is.na(same$Scan),]
+print(paste("Exact match:", nrow(same)))
+print(head(same,2))
+diff_spec <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
+diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
+print(paste("Different Spec eValue:", nrow(diff_spec)))
+tail(diff_spec,3)
+diff_pep  <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide!=m_table$PepSeq),]
+diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
+print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
+tail(diff_pep,3)
+```
+
+
+```{r, echo = F, include=F}
+evalue = 1e-20
+```
+
+#3. Differences. Spec eValue = `r evalue` 
+### a. From PNNL
+```{r, echo=F}
+c_pnnl = pnnl[pnnl$MSGFDB_SpecEValue<evalue,]
+print(paste("Remaining peptides:",nrow(c_pnnl)))
+# print("====== head ======")
+# head(c_pnnl,2)
+# print("====== tail ======")
+# tail(c_pnnl,2)
+
+```
+
+
+### b. From Docker
+```{r, echo=F}
+c_docker = docker[docker$Spec_Evalue<evalue,]
+c_docker = c_docker[!is.na(c_docker$Scan),]
+c_docker = c_docker[order(c_docker$Spec_Evalue, decreasing = F),]
+print(paste("Remaining peptides:",nrow(c_docker)))
+# print("====== head ======")
+# head(c_docker,2)
+# print("====== tail ======")
+# tail(c_docker,2)
+```
+
+### c. Differences
+```{r echo=F}
+m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all=T)
+same      <- m_table[(m_table$MSGFDB_SpecEValue==m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
+same      <- same[!is.na(same$Scan),]
+print(paste("Exact match:", nrow(same)))
+print(head(same,2))
+diff_spec <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
+diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
+print(paste("Different Spec eValue:", nrow(diff_spec)))
+tail(diff_spec,3)
+diff_pep  <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide!=m_table$PepSeq),]
+diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
+print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
+tail(diff_pep,3)
 ```
 

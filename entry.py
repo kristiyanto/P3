@@ -156,7 +156,7 @@ def itraq(mzid, options):
 	lock = mzid[:-5] + ".rda.tmp"
 	out = mzid[:-5]+".rda"
 	if os.path.isfile(out) or os.path.isfile(lock):
-		print("{} ... next.".format(lock))
+		print("{} already exists... next.".format(lock))
 	else:
 		cmd = ['Rscript', "/root/itraq.R"]
 		mzml = ""
@@ -199,7 +199,7 @@ def get_pride(prideID):
 
 	
 def get_itraq_opts(options):
-	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0.01, pNA= 4, QUANTIFICATION_METHOD="sum", COMBINE_BY="mean")
+	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="sum", COMBINE_BY="mean")
 	for k,v in R_OPTS.items():
 		try:
 			x = options.get("ITRAQ4", k)
