@@ -20,7 +20,7 @@ header-includes:
   \fancyfoot[LE,RO]{kristiyanto/p3:benchmark}
 ---
 \rule{\textwidth}{1pt}
-```{r, warning=FALSE, echo=FALSE, include=FALSE, cache=T}
+```{r, warning=FALSE, echo=FALSE, include=FALSE, cache=F}
 library(MSnbase)
 library(mzID)
 library(stringr)
