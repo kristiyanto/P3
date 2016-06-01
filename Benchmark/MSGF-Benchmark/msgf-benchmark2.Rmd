@@ -229,18 +229,19 @@ same      <- dta_merge[(dta_merge$MSGFDB_SpecEValue==dta_merge$'ms-gf:specevalue
 
 same      <- same[!is.na(same$Scan),]
 print(paste("Exact match:", nrow(same)))
-print(paste("From PNNL:", names(same)[2],names(same)[3],". From Docker:", names(same)[4],names(same)[5]))
-print(head(same,2))
+print(paste("From Docker:", names(same)[2],names(same)[3],". From PNNL:", names(same)[4],names(same)[5]))
+print(head(same[order(same$`ms-gf:specevalue`, decreasing = T),],2))
 diff_spec      <- dta_merge[(dta_merge$MSGFDB_SpecEValue!=dta_merge$'ms-gf:specevalue') & (dta_merge$Peptide==dta_merge$pepseq),]
 
 diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
 print(paste("Different Spec eValue:", nrow(diff_spec)))
-tail(diff_spec,3)
+tail(diff_spec[order(diff_spec$`ms-gf:specevalue`, decreasing = T),],3)
 diff_pep      <- dta_merge[(dta_merge$MSGFDB_SpecEValue!=dta_merge$'ms-gf:specevalue') & (dta_merge$Peptide!=dta_merge$pepseq),]
 
 diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
-print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
-tail(diff_pep,3)
+diff_scan <- nlevels(as.factor(diff_pep$Scan))
+print(paste("Different ID and Spec eValue:", nrow(diff_pep), "with", diff_scan, "distict Scan numbers."))
+tail(diff_pep[order(diff_pep$`ms-gf:specevalue`, decreasing = T),],3)
 ```
 
 
