@@ -39,7 +39,7 @@ mzid_pnnl         <- read.table(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B
 frm_docker        <- read.table(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.txt", sep="\t", header = T)
 
 pnnl <- mzid_pnnl[, c("Scan", "MSGFDB_SpecEValue", "Peptide")]
-#pnnl <- pnnl[!duplicated(pnnl$Scan),]
+pnnl <- pnnl[!duplicated(pnnl$Scan),]
 pnnl$Peptide <- substr(as.character(pnnl$Peptide),1,nchar(as.character(pnnl$Peptide))-2)
 pnnl$Peptide <- substr(as.character(pnnl$Peptide),3,nchar(as.character(pnnl$Peptide)))
 docker       <- frm_docker[,c("Scan","Spec_Evalue","PepSeq")]
@@ -96,20 +96,27 @@ print(paste("Remaining peptides:",nrow(c_docker)))
 
 ### c. Differences
 ```{r echo=F}
-m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all=T)
+m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all.x=T)
 same      <- m_table[(m_table$MSGFDB_SpecEValue==m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
 same      <- same[!is.na(same$Scan),]
 print(paste("Exact match:", nrow(same)))
 print(paste("From PNNL:", names(same)[2],names(same)[3],". From Docker:", names(same)[4],names(same)[5]))
 print(head(same,2))
 diff_spec <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
+
 diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
 print(paste("Different Spec eValue:", nrow(diff_spec)))
 tail(diff_spec,3)
-diff_pep  <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide!=m_table$PepSeq),]
+diff_pep  <- m_table[(m_table$Peptide!=m_table$PepSeq),]
+
 diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
 print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
 tail(diff_pep,3)
+
+unmatched <- m_table[is.na(m_table$Spec_Evalue),]
+print(paste("There are",nrow(unmatched),"of unmatched peptides"))
+head(unmatched)
+
 ```
 
 
@@ -144,20 +151,26 @@ print(paste("Remaining peptides:",nrow(c_docker)))
 
 ### c. Differences
 ```{r echo=F}
-m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all=T)
+m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all.x=T)
 same      <- m_table[(m_table$MSGFDB_SpecEValue==m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
 same      <- same[!is.na(same$Scan),]
 print(paste("Exact match:", nrow(same)))
 print(paste("From PNNL:", names(same)[2],names(same)[3],". From Docker:", names(same)[4],names(same)[5]))
 print(head(same,2))
 diff_spec <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
+
 diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
 print(paste("Different Spec eValue:", nrow(diff_spec)))
 tail(diff_spec,3)
-diff_pep  <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide!=m_table$PepSeq),]
+diff_pep  <- m_table[(m_table$Peptide!=m_table$PepSeq),]
+
 diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
 print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
 tail(diff_pep,3)
+
+unmatched <- m_table[is.na(m_table$Spec_Evalue),]
+print(paste("There are",nrow(unmatched),"of unmatched peptides"))
+head(unmatched)
 ```
 
 
@@ -192,28 +205,36 @@ print(paste("Remaining peptides:",nrow(c_docker)))
 
 ### c. Differences
 ```{r echo=F}
-m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all=T)
+m_table   <- merge(x=c_pnnl,y=docker,by="Scan", all.x=T)
 same      <- m_table[(m_table$MSGFDB_SpecEValue==m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
 same      <- same[!is.na(same$Scan),]
 print(paste("Exact match:", nrow(same)))
 print(paste("From PNNL:", names(same)[2],names(same)[3],". From Docker:", names(same)[4],names(same)[5]))
 print(head(same,2))
 diff_spec <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide==m_table$PepSeq),]
+
+
 diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
 print(paste("Different Spec eValue:", nrow(diff_spec)))
 tail(diff_spec,3)
-diff_pep  <- m_table[(m_table$MSGFDB_SpecEValue!=m_table$Spec_Evalue) & (m_table$Peptide!=m_table$PepSeq),]
+diff_pep  <- m_table[(m_table$Peptide!=m_table$PepSeq),]
+
 diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
 print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
 tail(diff_pep,3)
+
+unmatched <- m_table[is.na(m_table$Spec_Evalue),]
+print(paste("There are",nrow(unmatched),"of unmatched peptides"))
+head(unmatched)
+
 ```
 
 
 
 #6. Differences between results from PNNL and DTA file from PNNL.
 
-MSGF+ was run against `TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_dta.txt` using the same command (10 ppm, without Docker). 
-```{r echo=F, cache=T, warning=F}
+
+```{r echo=F, cache=T, warning=F, include=F}
 setwd("~/Dropbox/_SPACE/Benchmark/11")
 dta_mzid  <- mzID(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_msgfplus.mzid")
 #dta_mzml  <- readMSData(files = file_mzml[2])
@@ -222,26 +243,20 @@ dta       <- flatten(dta_mzid)
 colnames(dta)[2] <- "Scan"
 
 ```
+MSGF+ was run against `TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_dta.txt` using the same command (10 ppm, without Docker). From `r nrow(dta)` rows, `r sum(duplicated(dta$Scan))` duplicated scan numbers were removed. 
+
 ```{r echo=F}
-dta_merge <- merge(x=dta[,c("Scan","ms-gf:specevalue","pepseq")], y=pnnl, by="Scan", all=T)
+dta <- dta[,c("Scan","ms-gf:specevalue","pepseq")]
+names(dta) <- c("Scan","MSGFDB_SpecEValue","Peptide_dta")
+dta_merge <- merge(x=pnnl, y=dta, by=c("Scan","MSGFDB_SpecEValue"), all.x=T)
 
-same      <- dta_merge[(dta_merge$MSGFDB_SpecEValue==dta_merge$'ms-gf:specevalue') & (dta_merge$Peptide==dta_merge$pepseq),]
-
+same      <- dta_merge[(dta_merge$Peptide_dta==dta_merge$Peptide),]
 same      <- same[!is.na(same$Scan),]
-print(paste("Exact match:", nrow(same)))
-print(paste("From Docker:", names(same)[2],names(same)[3],". From PNNL:", names(same)[4],names(same)[5]))
-print(head(same[order(same$`ms-gf:specevalue`, decreasing = T),],2))
-diff_spec      <- dta_merge[(dta_merge$MSGFDB_SpecEValue!=dta_merge$'ms-gf:specevalue') & (dta_merge$Peptide==dta_merge$pepseq),]
-
-diff_spec <- diff_spec[!is.na(diff_spec$Scan),]
-print(paste("Different Spec eValue:", nrow(diff_spec)))
-tail(diff_spec[order(diff_spec$`ms-gf:specevalue`, decreasing = T),],3)
-diff_pep      <- dta_merge[(dta_merge$MSGFDB_SpecEValue!=dta_merge$'ms-gf:specevalue') & (dta_merge$Peptide!=dta_merge$pepseq),]
-
-diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
-diff_scan <- nlevels(as.factor(diff_pep$Scan))
-print(paste("Different ID and Spec eValue:", nrow(diff_pep), "with", diff_scan, "distict Scan numbers."))
-tail(diff_pep[order(diff_pep$`ms-gf:specevalue`, decreasing = T),],3)
+print(paste("Exact match:", nrow(same),"out of", nrow(pnnl)))
+      
+diff_pep <- dta_merge[(dta_merge$Peptide_dta!=dta_merge$Peptide),]
+print(paste("Diff peptide:", nrow(diff_pep)))
+head(diff_pep)
 ```
 
 
