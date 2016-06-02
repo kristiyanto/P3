@@ -35,7 +35,7 @@ file_mzml        <- list.files(path = ".", pattern ="mzML$|mzXML$", all.files = 
 file_fasta        <- list.files(path = ".", pattern ="fasta", all.files = F, 
                       full.names = F, recursive = F, ignore.case = T, include.dirs = F)
 
-mzid_pnnl         <- read.table(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_msgfdb_fht.txt", sep="\t", header=T)
+mzid_pnnl         <- read.table(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_groundtruth_fht.txt", sep="\t", header=T)
 frm_docker        <- read.table(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11.txt", sep="\t", header = T)
 
 pnnl <- mzid_pnnl[, c("Scan", "MSGFDB_SpecEValue", "Peptide")]
@@ -236,27 +236,34 @@ head(unmatched)
 
 ```{r echo=F, cache=T, warning=F, include=F}
 setwd("~/Dropbox/_SPACE/Benchmark/11")
-dta_mzid  <- mzID(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_msgfplus.mzid")
+dta_mzid  <- mzID(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_dta.mzid")
 #dta_mzml  <- readMSData(files = file_mzml[2])
-#dta       <- read.table("TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_msgfdb.tsv", sep="\t", header = T)
-dta       <- flatten(dta_mzid)
-colnames(dta)[2] <- "Scan"
+#dta       <- read.table("TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_dta.tsv", sep="\t", header = T)
+dta_flt    <- flatten(dta_mzid)
+colnames(dta_flt)[2] <- "Scan"
 
 ```
-MSGF+ was run against `TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_dta.txt` using the same command (10 ppm, without Docker). From `r nrow(dta)` rows, `r sum(duplicated(dta$Scan))` duplicated scan numbers were removed. 
+MSGF+ was run against `TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_dta.txt` using the same command (10 ppm, without Docker). 
 
 ```{r echo=F}
-dta <- dta[,c("Scan","ms-gf:specevalue","pepseq")]
-names(dta) <- c("Scan","MSGFDB_SpecEValue","Peptide_dta")
-dta_merge <- merge(x=pnnl, y=dta, by=c("Scan","MSGFDB_SpecEValue"), all.x=T)
+dta <- dta_flt[,c("Scan","ms-gf:specevalue","pepseq")]
+print(paste("Peptides:",nrow(dta),"with",sum(duplicated(dta$Scan)), "duplicated scan numbers."))
+names(dta) <- c("Scan","MSGFDB_SpecEValue","Peptide")
+dta <- dta[!duplicated(dta$Scan),]
+print(paste("After removing duplicates",nrow(dta), "peptides remained."))
 
-same      <- dta_merge[(dta_merge$Peptide_dta==dta_merge$Peptide),]
-same      <- same[!is.na(same$Scan),]
-print(paste("Exact match:", nrow(same),"out of", nrow(pnnl)))
-      
-diff_pep <- dta_merge[(dta_merge$Peptide_dta!=dta_merge$Peptide),]
-print(paste("Diff peptide:", nrow(diff_pep)))
-head(diff_pep)
+pnnl <- mzid_pnnl[, c("Scan", "MSGFDB_SpecEValue", "Peptide")]
+pnnl <- pnnl[!duplicated(pnnl$Scan),]
+pnnl$Peptide <- substr(as.character(pnnl$Peptide),1,nchar(as.character(pnnl$Peptide))-2)
+pnnl$Peptide <- substr(as.character(pnnl$Peptide),3,nchar(as.character(pnnl$Peptide)))
+
+m_table <- merge(x=pnnl, y=dta, by=c("Scan"), all=T)
+
+same <- m_table[(m_table$MSGFDB_SpecEValue.x ==m_table$MSGFDB_SpecEValue.y) & (m_table$Peptide.x == m_table$Peptide.y),]
+
+diff_spec <- m_table[(m_table$MSGFDB_SpecEValue.x !=m_table$MSGFDB_SpecEValue.y) & (m_table$Peptide.x == m_table$Peptide.y),]
+
+diff_pep <- m_table[(m_table$Peptide.x != m_table$Peptide.y),]
 ```
 
 
