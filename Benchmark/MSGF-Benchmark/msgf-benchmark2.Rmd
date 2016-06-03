@@ -110,7 +110,7 @@ tail(diff_spec,3)
 diff_pep  <- m_table[(m_table$Peptide!=m_table$PepSeq),]
 
 diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
-print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
+print(paste("Different ID:", nrow(diff_pep)))
 tail(diff_pep,3)
 
 unmatched <- m_table[is.na(m_table$Spec_Evalue),]
@@ -165,7 +165,7 @@ tail(diff_spec,3)
 diff_pep  <- m_table[(m_table$Peptide!=m_table$PepSeq),]
 
 diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
-print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
+print(paste("Different ID", nrow(diff_pep)))
 tail(diff_pep,3)
 
 unmatched <- m_table[is.na(m_table$Spec_Evalue),]
@@ -220,7 +220,7 @@ tail(diff_spec,3)
 diff_pep  <- m_table[(m_table$Peptide!=m_table$PepSeq),]
 
 diff_pep  <- diff_pep[!is.na(diff_pep$Scan),]
-print(paste("Different ID and Spec eValue:", nrow(diff_pep)))
+print(paste("Different ID:", nrow(diff_pep)))
 tail(diff_pep,3)
 
 unmatched <- m_table[is.na(m_table$Spec_Evalue),]
@@ -258,12 +258,43 @@ pnnl$Peptide <- substr(as.character(pnnl$Peptide),1,nchar(as.character(pnnl$Pept
 pnnl$Peptide <- substr(as.character(pnnl$Peptide),3,nchar(as.character(pnnl$Peptide)))
 
 m_table <- merge(x=pnnl, y=dta, by=c("Scan"), all=T)
-
 same <- m_table[(m_table$MSGFDB_SpecEValue.x ==m_table$MSGFDB_SpecEValue.y) & (m_table$Peptide.x == m_table$Peptide.y),]
 
 diff_spec <- m_table[(m_table$MSGFDB_SpecEValue.x !=m_table$MSGFDB_SpecEValue.y) & (m_table$Peptide.x == m_table$Peptide.y),]
 
 diff_pep <- m_table[(m_table$Peptide.x != m_table$Peptide.y),]
+print(paste("Exact same:",nrow(same), "Different Spec eValue:", nrow(diff_spec), "Different Peptides:", nrow(diff_pep)))
+print("Different Spec eValue")
+#head(diff_spec)
+
+print("Different Peptides")
+head(diff_pep)
 ```
 
+#7. Quantification Benchmark
 
+```{r, echo=F}
+setwd("~/Dropbox/_SPACE/Benchmark/11")
+q_pnnl <- read.table(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_ReporterIons.txt",sep="\t", header = T)
+names(q_pnnl)[2] <- "Scan"
+q_merge <- merge(frm_docker[,c("Scan","Spec_Evalue", "iTRAQ4.114", "iTRAQ4.115", "iTRAQ4.116", "iTRAQ4.117")], y=q_pnnl[,c("Scan","Ion_114","Ion_115","Ion_116","Ion_117")], by="Scan")
+
+print(paste("No of rows",nrow(q_merge),". Error measured by = |rslt_docker - rslt_pnnl|/rslt_docker"))
+err_114 <- abs(q_merge$iTRAQ4.114-q_merge$Ion_114)/q_merge$iTRAQ4.114
+print("Ion 114")
+summary(err_114)
+
+err_115 <- abs(q_merge$iTRAQ4.115-q_merge$Ion_115)/q_merge$iTRAQ4.115
+print("Ion 115")
+summary(err_115)
+
+err_116 <- abs(q_merge$iTRAQ4.116-q_merge$Ion_116)/q_merge$iTRAQ4.116
+print("Ion 116")
+summary(err_116)
+
+err_117 <- abs(q_merge$iTRAQ4.117-q_merge$Ion_117)/q_merge$iTRAQ4.117
+print("Ion 117")
+summary(err_117)
+
+boxplot(cbind(Ion114=log2(err_114),Ion115=log2(err_115),Ion115=log2(err_116),Ion116=log2(err_117)),main="Log2 relative error")
+```
