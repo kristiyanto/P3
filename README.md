@@ -1,7 +1,7 @@
 
 # P3: Portable Proteomics Pipeline
 
-P3 is a docker container for mass-spectometry data pre-processing pipelines. The pipelines consists of protein identification (using [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf)), and quantification (Bioconductor / [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html). 
+P3 is a docker container for mass-spectometry data pre-processing pipelines. The pipelines consists of protein identification (using [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf)), and quantification (Bioconductor / [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html)). 
 
 
 #### Input
@@ -9,6 +9,7 @@ The container takes mass-spectometry raw files (```*.mzml```, ```*.mzml.gz```, `
 [Click here](http://container-solutions.com/understanding-volumes-docker/) for more information about Docker Volumes. 
 
 The files can be retrieved from a mounted local storage ![Linking volumes between host OS and VM (Docker Engine)](media/vmvolume.png)
+
 [Click here](https://www.virtualbox.org/manual/ch04.htmlftp) for more information about Folder Sharing from VM and host machine.
 
 Alternatively, the container can also retrieve the files from the internet by providing either FTP address or PrideID in the ```p3.config``` file.
