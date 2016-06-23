@@ -1,6 +1,0 @@
-source("https://bioconductor.org/biocLite.R")
-install.packages("RCurl")
-install.packages("XML")
-biocLite("rpx")
-biocLite("mzID")
-biocLite("MSnID")

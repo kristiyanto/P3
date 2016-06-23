@@ -27,7 +27,7 @@ library(stringr)
 ```
 
 ```{r, warning=FALSE, echo=FALSE, include=FALSE, cache=F}
-setwd("~/Dropbox/_SPACE/Benchmark/11copy")
+setwd("~/Desktop/11copy")
 file_mzid        <- list.files(path = ".", pattern ="mzid", all.files = F, 
                       full.names = F, recursive = F, ignore.case = T, include.dirs = F)
 file_mzml        <- list.files(path = ".", pattern ="mzML$|mzXML$", all.files = F, 
@@ -235,7 +235,7 @@ head(unmatched)
 
 
 ```{r echo=F, cache=T, warning=F, include=F}
-setwd("~/Dropbox/_SPACE/Benchmark/11copy")
+setwd("~/Desktop/11copy")
 dta_mzid  <- mzID(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_dta.mzid")
 #dta_mzml  <- readMSData(files = file_mzml[2])
 #dta       <- read.table("TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_dta.tsv", sep="\t", header = T)
@@ -309,7 +309,7 @@ head(diff_pep)
 #7. Quantification Benchmark
 
 ```{r, echo=F}
-setwd("~/Dropbox/_SPACE/Benchmark/11copy")
+setwd("~/Desktop/11copy")
 q_pnnl <- read.table(file="TCGA_13-1489_42-2590_36-2529_117C_W_PNNL_B2S5_f11_ReporterIons.txt",sep="\t", header = T)
 names(q_pnnl)[2] <- "Scan"
 q_merge <- merge(frm_docker[,c("Scan","Spec_Evalue", "iTRAQ4.114", "iTRAQ4.115", "iTRAQ4.116", "iTRAQ4.117")], y=q_pnnl[,c("Scan","Ion_114","Ion_115","Ion_116","Ion_117")], by="Scan")
