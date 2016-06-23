@@ -10,7 +10,7 @@ print(args)
 args = commandArgs(trailingOnly=TRUE)
 
 px    <- PXDataset(args)
-files  <- grep("mzXML|fasta|mzml", pxfiles(px), value = TRUE)
+files  <- grep("mzXML|fasta|mzml|mzML", pxfiles(px), value = TRUE)
 
 for(f in files)
 {
