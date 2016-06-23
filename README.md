@@ -5,7 +5,8 @@ P3 is a docker container for mass-spectometry data pre-processing pipelines. The
 
 
 #### Input
-The container takes mass-spectometry raw files (```*.mzml```, ```*.mzml.gz```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and a peptide sequences file (```*.fasta```). Folder must be mounted to the container's "/root/data" (e.g. using ```-v``` tag). [Click here](http://container-solutions.com/understanding-volumes-docker/) for more information about Docker Volumes. 
+The container takes mass-spectometry raw files (```*.mzml```, ```*.mzml.gz```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and a peptide sequences file (```*.fasta```). Folder must be mounted to the container's "/root/data" (e.g. using ```-v``` tag). 
+[Click here](http://container-solutions.com/understanding-volumes-docker/) for more information about Docker Volumes. 
 
 The files can be retrieved from a mounted local storage ![Linking volumes between host OS and VM (Docker Engine)](media/vmvolume.png)
 [Click here](https://www.virtualbox.org/manual/ch04.htmlftp) for more information about Folder Sharing from VM and host machine.
