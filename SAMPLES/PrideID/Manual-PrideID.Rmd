@@ -19,7 +19,7 @@ header-includes:
   \pagestyle{fancy}
   \setlength\headheight{28pt}
   \rhead{\includegraphics[width = .2\textwidth]{../../media/pnnllogo.png}}
-  \fancyfoot[LE,RO]{kristiyanto/p3:benchmark}
+  \fancyfoot[LE,RO]{kristiyanto/p3   -- source:PrideID --}
 ---
 \rule{\textwidth}{1pt}
 
@@ -36,6 +36,8 @@ docker ps
 ```
 cd ~/Desktop/PXD001468
 ```
+![Required Files in directory](../../media/ls.png)
+
 in this case, ```p3.config``` must have the following fields:
 ```
 REPO = PRIDE
@@ -49,11 +51,15 @@ If other PrideID is desired, change the PRIDEID option in the p3.config. Ensure 
 
 3. Download / update p3 from Dockerhub, and run the image.
 
+![docker pull](../../media/docker-pull.png)
 ```
 eval $(docker-machine env default)
 docker pull kristiyanto/p3
 docker run --rm -v ~/Desktop:/root/data kristiyanto/p3
 ```
+
+![docker run](../../media/docker-run.png)
+
 if necessary, another image can be run simultaneously (in a different terminal windows).
 ```
 docker run --rm -v ~/Desktop:/root/data kristiyanto/p3

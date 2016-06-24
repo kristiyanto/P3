@@ -1,7 +1,7 @@
 ---
 title: | 
   | Portable Proteomics Pipeline (P3) 
-  | Use Case: PrideID
+  | Use Case: FTP
 author: "Daniel Kristiyanto (daniel.kristiyanto@pnnl.gov)"
 date: \today
 fontsize: 10pt
@@ -19,7 +19,7 @@ header-includes:
   \pagestyle{fancy}
   \setlength\headheight{28pt}
   \rhead{\includegraphics[width = .2\textwidth]{../../media/pnnllogo.png}}
-  \fancyfoot[LE,RO]{kristiyanto/p3:benchmark}
+  \fancyfoot[LE,RO]{kristiyanto/p3  -- source:FTP --}
 ---
 \rule{\textwidth}{1pt}
 
@@ -30,11 +30,14 @@ This is a use case/manual for a P3 pipeline with files retrieved from Pride data
 ```
 docker ps
 ```
+![docker PS](../../media/docker-ps.png)
 2. Download a sample [p3.config](p3.config) and [MSGFDB_Mods.txt](MSGFDB_Mods.txt) file and put it to a directory. e.g. `~/Desktop/PXD001468`
 
 ```
 cd ~/Desktop/PXD001468
 ```
+![Required Files in directory](../../media/ls.png)
+
 in this case, ```p3.config``` must have the following fields:
 ```
 REPO = FTP
@@ -48,11 +51,15 @@ If other PrideID is desired, change the PRIDEID option in the p3.config. Ensure 
 
 3. Download / update P3 from Dockerhub, and run the image.
 
+![docker pull](../../media/docker-pull.png)
 ```
 eval $(docker-machine env default)
 docker pull kristiyanto/p3
 docker run --rm -v ~/Desktop/PXD001468:/root/data kristiyanto/p3
 ```
+
+![docker run](../../media/docker-run.png)
+
 if necessary, another image can be run simultaneously (in a different terminal windows).
 ```
 docker run --rm -v ~/Desktop/PXD001468:/root/data kristiyanto/p3

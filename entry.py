@@ -199,7 +199,7 @@ def get_pride(prideID):
 
 	
 def get_itraq_opts(options):
-	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="sum", COMBINE_BY="mean")
+	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="sum", COMBINE_BY="SKIP")
 	for k,v in R_OPTS.items():
 		try:
 			x = options.get("ITRAQ4", k)
@@ -226,7 +226,7 @@ def get_msgf_opts(options):
 	return MSGF_OPTS
 
 def get_count_opts(options):
-	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="count", COMBINE_BY="mean")
+	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="count", COMBINE_BY="SKIP")
 	for k,v in R_OPTS.items():
 		try:
 			x = options.get("ITRAQ4", k)
