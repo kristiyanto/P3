@@ -31,14 +31,16 @@ if(quant_method=="count")
 {
   print("Spectrum Count Quantification")
   print(paste("Spec E-Value Threshold:", specvalue_threshold))
-  print(paste("features combined using:", combine_by))
+  if(toupper(combine_by) != "SKIP")
+  {
+    print(paste("features combined using:", combine_by))
+  }
 }else{
   print("iTRAQ4 Quantification")
   
   print(paste("Spec E-Value Threshold:", specvalue_threshold))
   print(paste("pNA:", pNA))
   print(paste("quant_method:", quant_method))
-  print(paste("features combined using:", combine_by))
 }
 print("=======================================")
 
