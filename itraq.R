@@ -80,7 +80,7 @@ gc(verbose = FALSE)
 print("Quantifying...")
 if (quant_method=="count")
 {
-  qnt               <- quantify(msexp.filter1, method=quant_method)
+  qnt.filtered      <- quantify(msexp.filter1, method=quant_method)
 } else
 {
   qnt               <- quantify(msexp.filter1, method=quant_method, reporters=iTRAQ4, strict=F, verbose=F)
