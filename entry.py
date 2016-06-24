@@ -302,7 +302,7 @@ def get_files(options):
 	elif src == "PRIDE":
 		prideID = options.get("SOURCE", "PRIDEID").upper()
 		if len(prideID) != 0:
-			if not os.path.isfile("pride_url.txt")
+			if not os.path.isfile("pride_url.txt"):
 				print("Reading from PRIDE REPOSITORY. Pride ID: {}".format(prideID))
 				get_pride(prideID)
 			with open('pride_url.txt', 'r') as f:
