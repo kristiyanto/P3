@@ -46,7 +46,7 @@ def main():
 	unzip_files()
 
 	# Re-List the files
-	sp_files_ext = (".mzXML", ".mzML", ".MZXML", ".mzml", ".MZML", ".mzml", ".mgf",".mzxml",".ms2",".pkl")
+	sp_files_ext = (".mzXML", ".mzML", ".MZXML", ".mzml", ".MZML", ".mzml",".mzxml")
 
 	spectrum = scan_files(sp_files_ext)
 	
@@ -59,7 +59,7 @@ def main():
 	RUN_MSGF = (options.get("MSGF", "RUN_MSGF").upper() == "YES")
 	fasta = scan_fasta()
 
-
+	sys.stdout.flush()
 	# Run MSGF 
 	if fasta and spectrum and RUN_MSGF:
 		print("Running MSGF") 
@@ -280,7 +280,6 @@ def get_files(options):
 	except:
 		sys.exit("Configuration file error. Check p3.config.")
 
-	global_o = ["REPO", "FTP_1", "FTP_2", "PRIDE"]
 	if src == "LOCAL":
 		print("Reading local files.")
 
@@ -298,22 +297,24 @@ def get_files(options):
 			print("Reading from {}.".format(ftp1))
 			fetch_ftp(ftp1)
 
-		
+			
 	elif src == "PRIDE":
 		prideID = options.get("SOURCE", "PRIDEID").upper()
+		print(prideID)
 		if len(prideID) != 0:
 			if not os.path.isfile("pride_url.txt"):
 				print("Reading from PRIDE REPOSITORY. Pride ID: {}".format(prideID))
 				get_pride(prideID)
-			with open('pride_url.txt', 'r') as f:
+			with open("pride_url.txt", "r") as f:
 				ftp1 = f.readline().rstrip()
-				fetch_ftp(ftp1)
+			fetch_ftp(ftp1)
 		else:
 			sys.exit("Reading from PRIDE REPOSITORY. \n Error: Pride Repository is not defined. Check p3.config.")
 		try:
-			os.remove("pride.txt")
+			os.remove("pride_url.txt")
 		except:
 			pass
+
 	else: 
 		sys.exit("Error reading p3.config.")
 
@@ -325,23 +326,28 @@ def fetch_ftp(ftp_url):
 	ftp = FTP(url_host)
 	ftp.login()
 	ftp.cwd(url_path)
-	ftp.retrlines('LIST')
+	#ftp.retrlines('LIST')
 	filenames = ftp.nlst()
 	
-	filematch = "*.*"
-	print("Downloading...")
-	for filename in ftp.nlst(filematch)[0:3]:
-		if os.path.isfile(filename):
-			print("{} already exists. Next..".format(filename))
-		else:
-			try:
-				fhandle = open(filename, 'wb')
-				ftp.retrbinary('RETR ' + filename, fhandle.write)
-				fhandle.close()
-				print("{} downloaded.".format(filename))
-			except:
-				print("{} failed to download".format(filename))
-				
+	for filematch in ("*.fasta","*.mzXML", "*.mzML", "*.MZXML", "*.mzml", "*.MZML", "*.mzml","*.mzxml"):
+		#filematch = "*.*"
+		print("Downloading...")
+		for filename in ftp.nlst(filematch):
+			print(filename)
+			sys.stdout.flush()
+
+			if os.path.isfile(filename):
+				print("{} already exists. Next..".format(filename))
+			else:
+				try:
+					fhandle = open(filename, 'wb')
+					ftp.retrbinary('RETR ' + filename, fhandle.write)
+					fhandle.close()
+					print("{} downloaded.".format(filename))
+				except:
+					print("{} failed to download".format(filename))
+		sys.stdout.flush()	
+
 def unzip_files():
 	gzfiles = glob.glob("*.gz")
 	if len(gzfiles) != 0:
@@ -381,10 +387,7 @@ def scan_fasta():
 def write_blank_p3(config_file):
 	content = """
 	# This is configuration file for P3. http://github.com/kristiyanto/p3
-	#
-	# MAXWAIT = 10800 # 	Optional. How long the container will wait for other containers 
-	# 						to finish when multiple containers are running concurrently. 
-	# 
+
 	[SOURCE]
 	# REPO = LOCAL/FTP/PRIDE
 	REPO = LOCAL
@@ -455,6 +458,13 @@ def write_blank_p3(config_file):
 	# COMBINE_BY will perform feature folding with the specified function. If "SKIP" is given, this task will not be performed.
 	# COMBINE_BY: SKIP / mean / median / weighted.mean / sum / medpolish
 	COMBINE_BY = mean
+
+
+	# OPTIONAL
+	# MAXWAIT = 10800 # 	Optional. How long the container will wait for other containers 
+	# 						to finish when multiple containers are running concurrently. 
+
+
 	"""
 	try:
 		with open(config_file, "w") as p3_config:

@@ -10,7 +10,7 @@ P3 is a docker container for mass-spectometry data pre-processing pipelines. The
 The container takes mass-spectometry raw files (```*.mzml```, ```*.mzml.gz```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and a peptide sequences file (```*.fasta```). Folder must be mounted to the container's "/root/data" (e.g. using ```-v``` tag). 
 [Click here](http://container-solutions.com/understanding-volumes-docker/) for more information about Docker Volumes. 
 
-The files can be retrieved from a mounted local storage ![Linking volumes between host OS and VM (Docker Engine)](https://github.com/kristiyanto/P3/blob/master/media/vmvolume.png)
+The files can be retrieved from a mounted local storage ![Linking volumes between host OS and VM (Docker Engine)](https://raw.githubusercontent.com/kristiyanto/P3/master/media/vmvolume.png)
 
 [Click here](https://www.virtualbox.org/manual/ch04.htmlftp) for more information about Folder Sharing from VM and host machine.
 
@@ -37,7 +37,7 @@ To run P3, Docker engine must be installed. [Click here](https://docs.docker.com
 
 Protein identification and quantification is a computationally intensive process. Depending on the size of the data, at least 4Gb available memory on the Docker Machine is required. Click here for more information on increasing the memory allocation for Docker engine on VirtualBox machine for MacOS and Windows Users.
 
-![Adjusting RAM allocation for Docker Machine](https://github.com/kristiyanto/P3/blob/master/media/ram.png)
+![Adjusting RAM allocation for Docker Machine](https://raw.githubusercontent.com/kristiyanto/P3/master/media/ram.png)
 
 
 ### Contact Information
