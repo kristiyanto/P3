@@ -30,7 +30,6 @@ print(" Quantification")
 if(quant_method=="count")
 {
   print("Spectrum Count Quantification")
-  print("iTRAQ4 Quantification")
   if(specvalue_threshold > 0)
   {
     print(paste("Spec E-Value Threshold:", specvalue_threshold))
