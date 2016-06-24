@@ -302,11 +302,18 @@ def get_files(options):
 	elif src == "PRIDE":
 		prideID = options.get("SOURCE", "PRIDEID").upper()
 		if len(prideID) != 0:
-			print("Reading from PRIDE REPOSITORY. Pride ID: {}".format(prideID))
-			get_pride(prideID)
-
+			if not os.path.isfile("pride_url.txt")
+				print("Reading from PRIDE REPOSITORY. Pride ID: {}".format(prideID))
+				get_pride(prideID)
+			with open('pride_url.txt', 'r') as f:
+    			ftp1 = f.readline().rstrip()
+    			fetch_ftp(ftp1)
 		else:
 			sys.exit("Reading from PRIDE REPOSITORY. \n Error: Pride Repository is not defined. Check p3.config.")
+		try:
+			os.remove("pride.txt")
+		except:
+			pass
 	else: 
 		sys.exit("Error reading p3.config.")
 
@@ -387,6 +394,7 @@ def write_blank_p3(config_file):
 	# FTP_2 = ftp://massive.ucsd.edu/MSV000079527/peak/mgf/
 	FTP_1 = ftp://massive.ucsd.edu/MSV000079527/sequence/
 	FTP_2 = ftp://massive.ucsd.edu/MSV000079527/peak/mgf/
+
 	# if REPO = PRIDEID, PRIDEID must be defined
 	# e.g 
 	# PRIDEID = PXD000001
@@ -397,10 +405,10 @@ def write_blank_p3(config_file):
 	# e.g:
 	# RUN_MSGF = YES
 	RUN_MSGF = YES
+
 	# MSGF_OPTIONS: OPTIONAL. Additional options for identification other than -s -d and -o
 	# Check https://omics.pnl.gov/software/ms-gf for more detail
 	# e.g
-
 	# -t = 10ppm 
 	# -m = 0 
 	# -inst = 1 
@@ -422,24 +430,28 @@ def write_blank_p3(config_file):
 	# METHOD = SPECTRUM_COUNT / ITRAQ4 / NONE 
 	# If "NONE", quantification will not be run.
 	# e.g
+	# METHOD = SPECTRUM_COUNT
 	METHOD = SPECTRUM_COUNT
 	
 	[SPECTRUM_COUNT]
-	# Ignored if QUANTIFICATION METHOD is not SPECTRUM_COUNT
+	# This section is ignored if QUANTIFICATION METHOD is not SPECTRUM_COUNT
 	# If left blank filtering will not be performed
 	SPEC_EVALUE_TRESHOLD = 1e-10
+
 	# COMBINE_BY will perform feature folding with the specified function. If "SKIP" is given, this task will not be performed.
 	# COMBINE_BY: SKIP / mean / median / weighted.mean / sum / medpolish
 	COMBINE_BY = mean
 
 	[ITRAQ4]
-	# Ignored if QUANTIFICATION METHOD is not ITRAQ4
+	# This section is ignored if QUANTIFICATION METHOD is not ITRAQ4
 	# If left blank filtering will not be performed
 	SPEC_EVALUE_TRESHOLD = 1e-10
 	pNA = 4
+
 	# QUANTIFICATION_METHOD: / trapezoidation / max / sum / SI / SIgi / SIn / SAF / NSAF  
 	# *CASE SENSITIVE* 
 	QUANTIFICATION_METHOD = max
+
 	# COMBINE_BY will perform feature folding with the specified function. If "SKIP" is given, this task will not be performed.
 	# COMBINE_BY: SKIP / mean / median / weighted.mean / sum / medpolish
 	COMBINE_BY = mean

@@ -24,8 +24,6 @@ header-includes:
 \rule{\textwidth}{1pt}
 
 
-### Pride ID
-
 This is a use case/manual for a P3 pipeline with files retrieved from Pride database. 
 
 1. Make sure [Docker engine](https://docs.docker.com/engine/installation/) is installed and running.
@@ -36,7 +34,6 @@ docker ps
 
 ```
 cd ~/Desktop/PXD001468
-ls
 ```
 in this case, ```p3.config``` must have the following fields:
 ```
@@ -48,6 +45,7 @@ METHOD = (e.g: SPECTRUM_COUNT)
 
 If other PrideID is desired, change the PRIDEID option in the p3.config. Ensure that the corresponding PrideID have the required files (\*.fasta, \*.mzml, etc.).
 
+
 3. Download / update p3 from Dockerhub, and run the image.
 
 ```
@@ -55,7 +53,6 @@ docker pull kristiyanto/p3
 docker run --rm -v ~/Desktop:/root/data kristiyanto/p3
 ```
 if necessary, another image can be run simultaneously (in a different terminal windows).
-
 
 
 4. Once processes completed, the directory will be populated with:
