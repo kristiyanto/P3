@@ -306,8 +306,8 @@ def get_files(options):
 				print("Reading from PRIDE REPOSITORY. Pride ID: {}".format(prideID))
 				get_pride(prideID)
 			with open('pride_url.txt', 'r') as f:
-    			ftp1 = f.readline().rstrip()
-    			fetch_ftp(ftp1)
+				ftp1 = f.readline().rstrip()
+				fetch_ftp(ftp1)
 		else:
 			sys.exit("Reading from PRIDE REPOSITORY. \n Error: Pride Repository is not defined. Check p3.config.")
 		try:
