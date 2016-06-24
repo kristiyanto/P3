@@ -151,7 +151,7 @@ def msgf(spectrum, fasta, options, *opt):
 
 def itraq(mzid, options):
 	ext_set = (".mzXML", ".mzML", ".MZXML", ".mzml", ".MZML", ".mzml")
-	opts_set = ("SPECEVALUE_TRESHOLD", "pNA", "QUANTIFICATION_METHOD", "COMBINE_BY")
+	opts_set = ("SPEC_EVALUE_TRESHOLD", "pNA", "QUANTIFICATION_METHOD", "COMBINE_BY")
 	sp_files = scan_files(ext_set)
 	lock = mzid[:-5] + ".rda.tmp"
 	out = mzid[:-5]+".rda"
@@ -199,7 +199,7 @@ def get_pride(prideID):
 
 	
 def get_itraq_opts(options):
-	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="sum", COMBINE_BY="SKIP")
+	R_OPTS = dict(SPEC_EVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="sum", COMBINE_BY="SKIP")
 	for k,v in R_OPTS.items():
 		try:
 			x = options.get("ITRAQ4", k)
@@ -226,10 +226,10 @@ def get_msgf_opts(options):
 	return MSGF_OPTS
 
 def get_count_opts(options):
-	R_OPTS = dict(SPECEVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="count", COMBINE_BY="SKIP")
+	R_OPTS = dict(SPEC_EVALUE_TRESHOLD= 0, pNA= 4, QUANTIFICATION_METHOD="count", COMBINE_BY="SKIP")
 	for k,v in R_OPTS.items():
 		try:
-			x = options.get("ITRAQ4", k)
+			x = options.get("SPECTRUM_COUNT", k)
 			if len(x) != 0 : R_OPTS[k] = x
 		except:
 			continue
@@ -277,6 +277,15 @@ def check_config(cfg):
 def get_files(options):
 	try: 
 		src = options.get("SOURCE", "REPO").upper()
+		if src == "FTP":
+			try:
+				ftp1 = options.get("SOURCE", "FTP_1")
+			except:
+				sys.exit("Failed to read FTP_1 option in config file.")
+			try:
+				ftp2 = options.get("SOURCE", "FTP_1")
+			except:
+				pass
 	except:
 		sys.exit("Configuration file error. Check p3.config.")
 
@@ -286,8 +295,6 @@ def get_files(options):
 	elif src == "FTP" and options.get("SOURCE", "FTP_1") == "":
 		sys.exit("Reading from FTP. \n ERROR FTP Source is not defined. Check p3.config")        
 	elif src == "FTP" and options.get("SOURCE", "FTP_1") != "":
-		ftp1 = options.get("SOURCE", "FTP_1")
-		ftp2 = options.get("SOURCE", "FTP_2")
 		if len(ftp2) != 0:
 			print("Reading from {} and {}.".format(ftp1, ftp2)) 
 			fetch_ftp(ftp1)

@@ -58,7 +58,7 @@ docker pull kristiyanto/p3
 docker run --rm -v ~/Desktop/PXD001468:/root/data kristiyanto/p3
 ```
 
-![docker run](../../media/docker-run.png)
+![docker run](../../media/docker-run-ftp.png)
 
 if necessary, another image can be run simultaneously (in a different terminal windows).
 ```
@@ -74,5 +74,5 @@ docker run --rm -v ~/Desktop/PXD001468:/root/data kristiyanto/p3
 ***
 
 If the process stop returning error:
-* Make sure all the required files are in the folder. E.g: Fasta files sometimes are not provided in the FTP/Pride repository and must be provided manually. 
+* Make sure all the required files are in the folder. E.g: In the case fasta file is not provided in the FTP/Pride repository and must be provided manually. 
 * Remove all \*.tmp files before re-run the containers.

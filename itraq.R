@@ -89,7 +89,7 @@ rm(msexp.filter1)
 rm(qnt)
 gc(verbose = FALSE)
 
-if(toupper(combine_by) == "skip")
+if(toupper(combine_by) == "SKIP")
 {
   result  <- qnt.filtered
 } else  
