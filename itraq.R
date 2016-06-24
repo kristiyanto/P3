@@ -30,17 +30,27 @@ print(" Quantification")
 if(quant_method=="count")
 {
   print("Spectrum Count Quantification")
-  print(paste("Spec E-Value Threshold:", specvalue_threshold))
+  print("iTRAQ4 Quantification")
+  if(specvalue_threshold > 0)
+  {
+    print(paste("Spec E-Value Threshold:", specvalue_threshold))
+  }
   if(toupper(combine_by) != "SKIP")
   {
     print(paste("features combined using:", combine_by))
   }
 }else{
   print("iTRAQ4 Quantification")
-  
-  print(paste("Spec E-Value Threshold:", specvalue_threshold))
+  if(specvalue_threshold > 0)
+  {
+    print(paste("Spec E-Value Threshold:", specvalue_threshold))
+  }
   print(paste("pNA:", pNA))
   print(paste("quant_method:", quant_method))
+  if(toupper(combine_by) != "SKIP")
+  {
+    print(paste("features combined using:", combine_by))
+  }
 }
 print("=======================================")
 
@@ -101,10 +111,17 @@ if(toupper(combine_by) == "SKIP")
 save(result, file=out_file)
 ####################################### OUTPUT ###################################################
 print("Writing the output...")
-quantified		  <- as.data.frame(cbind(Scan=fData(result)$'scan number(s)', Spectrum=fData(result)$spectrum, Spec_Evalue=fData(result)$'ms-gf:specevalue', AccessionID=row.names(result), PepSeq=fData(result)$pepseq, exprs(result)))
-#write.table(evalue.table, quote=F, row.names=F, file="evalue.txt", sep ="\t")
-#rm(evalue.table)
-#gc()
+if (quant_method=="count")
+{
+  Cnt=exprs(result)
+  colnames(Cnt) = "Count"
+  quantified		  <- as.data.frame(cbind(Scan=fData(result)$'scan number(s)', Spectrum=fData(result)$spectrum, Spec_Evalue=fData(result)$'ms-gf:specevalue', AccessionID=row.names(result), PepSeq=fData(result)$pepseq, Cnt))
+  
+} else
+{
+  quantified		  <- as.data.frame(cbind(Scan=fData(result)$'scan number(s)', Spectrum=fData(result)$spectrum, Spec_Evalue=fData(result)$'ms-gf:specevalue', AccessionID=row.names(result), PepSeq=fData(result)$pepseq, exprs(result)))
+}
+
 write.table(quantified, row.names = F, quote=F, file=str_replace(out_file,".rda",".txt"), sep = "\t")
 stop.time = Sys.time()
 #rm(result)
