@@ -89,7 +89,8 @@ gc(verbose = FALSE)
 print("Quantifying...")
 if (quant_method=="count")
 {
-  qnt.filtered      <- quantify(msexp.filter1, method=quant_method)
+  qnt               <- quantify(msexp.filter1, method=quant_method)
+  qnt.filtered      <- qnt
 } else
 {
   qnt               <- quantify(msexp.filter1, method=quant_method, reporters=iTRAQ4, strict=F, verbose=F)
@@ -123,7 +124,7 @@ if (quant_method=="count")
 
 write.table(quantified, row.names = F, quote=F, file=str_replace(out_file,".rda",".txt"), sep = "\t")
 stop.time = Sys.time()
-#rm(result)
+
 print(paste("File:", out_file,"Start Time:", start.time," Stop Time:", stop.time, "Elapsed=",stop.time-start.time))
 rm(result)
 rm(qnt.filtered)
