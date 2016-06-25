@@ -450,7 +450,8 @@ def write_blank_p3(config_file):
 
 	# COMBINE_BY will perform feature folding with the specified function. If "SKIP" is given, this task will not be performed.
 	# COMBINE_BY: SKIP / mean / median / weighted.mean / sum / medpolish
-	COMBINE_BY = mean
+	# For spectrum count use "sum".
+	COMBINE_BY = sum
 
 	[ITRAQ4]
 	# This section is ignored if QUANTIFICATION METHOD is not ITRAQ4
