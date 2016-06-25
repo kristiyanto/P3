@@ -147,6 +147,7 @@ def msgf(spectrum, fasta, options, *opt):
 			except:
 				print("MSGF Error: {}".format(file))
 			if not os.path.isfile(out2): itraq(out, options)
+		sys.stdout.flush()
 
 
 def itraq(mzid, options):
@@ -184,6 +185,7 @@ def itraq(mzid, options):
 				os.remove(lock)
 			except:
 				print("Quantification failed.")
+	sys.stdout.flush()
    
 
 def itraq_folding(options):
@@ -207,6 +209,7 @@ def get_itraq_opts(options):
 		except:
 			continue
 	print("ITRAQ. {} : {}".format(k, R_OPTS[k]))
+	sys.stdout.flush()
 	return R_OPTS             
 
 def get_msgf_opts(options):
@@ -223,6 +226,7 @@ def get_msgf_opts(options):
 			MSGF_OPTS.append(k)
 			MSGF_OPTS.append(v)
 	#print(MSGF_OPTS)
+	sys.stdout.flush()
 	return MSGF_OPTS
 
 def get_count_opts(options):
@@ -234,6 +238,7 @@ def get_count_opts(options):
 		except:
 			continue
 	print("ITRAQ. {} : {}".format(k, R_OPTS[k]))
+	sys.stdout.flush()
 	return R_OPTS             
 
 			
@@ -254,7 +259,7 @@ def scquant(mzid_set, options):
 	else:
 		print(cmd)
 		subprocess.call(cmd)
-
+	sys.stdout.flush()
 			  
 ################################################ ADMINISTRIVIA  ################################################
 	
@@ -296,7 +301,8 @@ def get_files(options):
 		sys.exit("Reading from FTP. \n ERROR FTP Source is not defined. Check p3.config")        
 	elif src == "FTP" and options.get("SOURCE", "FTP_1") != "":
 		if len(ftp2) != 0:
-			print("Reading from {} and {}.".format(ftp1, ftp2)) 
+			print("Reading from {} and {}.".format(ftp1, ftp2))
+			sys.stdout.flush() 
 			fetch_ftp(ftp1)
 			fetch_ftp(ftp2)
 
