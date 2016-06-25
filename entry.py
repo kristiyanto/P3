@@ -323,6 +323,7 @@ def unzip_files():
 	gzfiles = glob.glob("*.gz")
 	if len(gzfiles) != 0:
 		for file in gzfiles:
+			print("Unzipping {}".format(file))
 			base = os.path.basename(file)
 			dest = base[:-3]
 			if not os.path.isfile(dest):
@@ -330,6 +331,7 @@ def unzip_files():
 					with open(dest, 'wb') as outfile:
 						for line in infile:
 							outfile.write(line)
+			sys.stdout.flush()
 
 def scan_files(ext):
 	files = []
@@ -362,6 +364,7 @@ def write_blank_p3(config_file):
 	[SOURCE]
 	# REPO = LOCAL/FTP/PRIDE
 	REPO = LOCAL
+	
 	# If REPO = FTP, at least FTP_1 is required.
 	# e.g: 
 	# FTP_1 = ftp://massive.ucsd.edu/MSV000079527/sequence/ 
@@ -372,7 +375,7 @@ def write_blank_p3(config_file):
 	# if REPO = PRIDEID, PRIDEID must be defined
 	# e.g 
 	# PRIDEID = PXD000001
-	PRIDEID = 
+	PRIDEID = PXD003903
 	
 	[MSGF]
 	# RUN_MSGF = YES / NO ; if NO, MSGF identification will be skipped.
@@ -382,7 +385,7 @@ def write_blank_p3(config_file):
 
 	# MSGF_OPTIONS: OPTIONAL. Additional options for identification other than -s -d and -o
 	# Check https://omics.pnl.gov/software/ms-gf for more detail
-	# e.g
+	
 	# -t = 10ppm 
 	# -m = 0 
 	# -inst = 1 
