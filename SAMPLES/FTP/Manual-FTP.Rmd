@@ -55,7 +55,12 @@ If other PrideID is desired, change the PRIDEID option in the p3.config. Ensure 
 ```
 eval $(docker-machine env default)
 docker pull kristiyanto/p3
+
+# Mac/Linux
 docker run --rm -v ~/Desktop/PXD001468:/root/data kristiyanto/p3
+
+## On Windows:
+docker run --rm -v /c/Users/daniel/Desktop/PXD001468:/root/data kristiyanto/p3
 ```
 
 ![docker run](../../media/docker-run-ftp.png)
