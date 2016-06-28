@@ -1,6 +1,7 @@
 
 # P3: Portable Proteomics Pipeline
 Github: https://github.com/kristiyanto/P3
+Dockerhub: https://hub.docker.com/r/kristiyanto/p3/
 
 
 P3 is a docker container for mass-spectometry data pre-processing pipelines. The pipelines consists of protein identification (using [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf)), and quantification (Bioconductor / [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html)). 
