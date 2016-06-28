@@ -23,6 +23,13 @@ If not provided, ```p3.config``` template will be created. The configuration fil
 ```
 docker pull kristiyanto/p3
 docker run --rm -v /path/to/files:/root/data kristiyanto/p3
+
+# e.g: Windows
+docker run --rm -v /c/Users/daniel/p3-data:/root/data kristiyanto/p3
+
+#e.g: Mac/Linux
+docker run --rm -v ~/Desktop/p3-data:/root/data kristiyanto/p3
+
 ```
 
 #### Output
@@ -38,6 +45,12 @@ To run P3, Docker engine must be installed. [Click here](https://docs.docker.com
 Protein identification and quantification is a computationally intensive process. Depending on the size of the data, at least 4Gb available memory on the Docker Machine is required. Click here for more information on increasing the memory allocation for Docker engine on VirtualBox machine for MacOS and Windows Users.
 
 ![Adjusting RAM allocation for Docker Machine](https://raw.githubusercontent.com/kristiyanto/P3/master/media/ram.png)
+
+### Use Case / Config File Samples:
+1. Using PRIDE as source (Spectrum Count): https://github.com/kristiyanto/P3/tree/master/SAMPLES/PrideID
+2. Using FTP as source (Spectrum Count): https://github.com/kristiyanto/P3/tree/master/SAMPLES/FTP
+3. Local files (iTRAQ4): https://github.com/kristiyanto/P3/tree/master/SAMPLES/iTRAQ4
+4. Local files (Spectrum Count): https://github.com/kristiyanto/P3/tree/master/SAMPLES/LOCAL 
 
 
 ### Contact Information
