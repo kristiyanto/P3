@@ -4,7 +4,7 @@ Github: https://github.com/kristiyanto/P3
 Dockerhub: https://hub.docker.com/r/kristiyanto/p3/
 
 
-P3 is a docker container for mass-spectometry data pre-processing pipelines. The pipelines consists of protein identification (using [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf)), and quantification (Bioconductor / [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html)). 
+P3 is a docker container for mass-spectometry data pre-processing pipelines. The pipelines consist of protein identification (using [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf)), and quantification (Bioconductor / [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html)). 
 
 
 #### Input
@@ -18,7 +18,7 @@ The files can be retrieved from a mounted local storage ![Linking volumes betwee
 Alternatively, the container can also retrieve the files from the internet by providing either FTP address or PrideID in the ```p3.config``` file.
 
 #### Configuration Files
-If not provided, ```p3.config``` template will be created. The configuration file navigate how the pipeline should be run.
+If not provided, ```p3.config``` template will be created. The configuration file navigates how the pipeline should be run. Inspect p3.config before re-run.
 
 ### Running the container
 ```
