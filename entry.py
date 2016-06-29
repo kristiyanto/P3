@@ -196,7 +196,7 @@ def get_count_opts(options):
 			if len(x) != 0 : R_OPTS[k] = x
 		except:
 			continue
-	print("ITRAQ. {} : {}".format(k, R_OPTS[k]))
+	#print("Spectrum Count. {} : {}".format(k, R_OPTS[k]))
 	sys.stdout.flush()
 	return R_OPTS             
 
