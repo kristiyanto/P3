@@ -6,6 +6,8 @@ Dockerhub: https://hub.docker.com/r/kristiyanto/p3/
 
 P3 is a docker container for mass-spectometry data pre-processing pipelines. The pipelines consist of protein identification (using [MSGF+ tool developed by PNNL](https://omics.pnl.gov/software/ms-gf)), and quantification (Bioconductor / [MSnbase](http://bioconductor.org/packages/release/bioc/html/MSnbase.html)). 
 
+# Demo
+[![Demo Video for Windows 8.0](https://raw.githubusercontent.com/kristiyanto/P3/master/media/video-thumb.png)](https://www.youtube.com/embed/diBY00aqOJk)
 
 #### Input
 The container takes mass-spectometry raw files (```*.mzml```, ```*.mzml.gz```, ```*.mgf```, ```*.mzxml```, ```*.ms2```, ```*.pkl```) and a peptide sequences file (```*.fasta```). Folder must be mounted to the container's "/root/data" (e.g. using ```-v``` tag). 
