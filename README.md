@@ -60,8 +60,8 @@ Protein identification and quantification is a computationally intensive process
 
 You are invited to contribute for new features, updates, fixes by sending pull requests.
 
-Daniel Kristiyanto & Samuel Payne
-
-Pacific Northwest National Laboratory
-
+Daniel Kristiyanto & Samuel Payne  
+Pacific Northwest National Laboratory  
 _Spring, 2016_
+
+
